@@ -13,9 +13,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import app.rednote_m25.presentation.ui.category.CategoryScreen
 import app.rednote_m25.presentation.ui.collection.CollectionScreen
 import app.rednote_m25.presentation.ui.detail.NoteDetailScreen
 import app.rednote_m25.presentation.ui.home.HomeScreen
+import app.rednote_m25.presentation.ui.profile.ProfileScreen
+import app.rednote_m25.presentation.ui.publish.PublishScreen
 import app.rednote_m25.presentation.ui.search.SearchScreen
 import app.rednote_m25.presentation.ui.theme.RednoteTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +56,12 @@ fun RednoteApp() {
                 },
                 onCollectionClick = {
                     navController.navigate("collection")
+                },
+                onCategoryClick = {
+                    navController.navigate("category")
+                },
+                onProfileClick = {
+                    navController.navigate("profile")
                 }
             )
         }
@@ -71,6 +80,36 @@ fun RednoteApp() {
                 onBackClick = { navController.popBackStack() },
                 onNoteClick = { noteId ->
                     navController.navigate("note_detail/$noteId")
+                }
+            )
+        }
+
+        composable("category") {
+            CategoryScreen(
+                onBackClick = { navController.popBackStack() },
+                onNoteClick = { noteId ->
+                    navController.navigate("note_detail/$noteId")
+                }
+            )
+        }
+
+        composable("profile") {
+            ProfileScreen(
+                onBackClick = { navController.popBackStack() },
+                onNoteClick = { noteId ->
+                    navController.navigate("note_detail/$noteId")
+                },
+                onPublishClick = {
+                    navController.navigate("publish")
+                }
+            )
+        }
+
+        composable("publish") {
+            PublishScreen(
+                onBackClick = { navController.popBackStack() },
+                onPublishSuccess = {
+                    navController.popBackStack()
                 }
             )
         }

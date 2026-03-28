@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
@@ -24,7 +26,8 @@ enum class HomeTab(
     val unselectedIcon: ImageVector
 ) {
     HOME("首页", Icons.Filled.Home, Icons.Outlined.Home),
-    PERSON("个人", Icons.Filled.Person, Icons.Outlined.Person)
+    CATEGORY("分类", Icons.Filled.Category, Icons.Outlined.Category),
+    PERSON("我的", Icons.Filled.Person, Icons.Outlined.Person)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +36,8 @@ fun HomeScreen(
     onNoteClick: (Long) -> Unit,
     onSearchClick: () -> Unit = {},
     onCollectionClick: () -> Unit = {},
+    onCategoryClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -76,8 +81,10 @@ fun HomeScreen(
                         selected = selectedTab == tab,
                         onClick = {
                             selectedTab = tab
-                            if (tab == HomeTab.PERSON) {
-                                onCollectionClick()
+                            when (tab) {
+                                HomeTab.HOME -> {}
+                                HomeTab.CATEGORY -> onCategoryClick()
+                                HomeTab.PERSON -> onProfileClick()
                             }
                         },
                         icon = {

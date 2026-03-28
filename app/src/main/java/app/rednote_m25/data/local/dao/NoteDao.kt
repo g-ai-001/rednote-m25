@@ -41,4 +41,13 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes WHERE title LIKE '%' || :keyword || '%' OR content LIKE '%' || :keyword || '%' ORDER BY createdAt DESC")
     fun searchNotes(keyword: String): Flow<List<NoteEntity>>
+
+    @Query("SELECT DISTINCT tags FROM notes WHERE tags != ''")
+    fun getAllTags(): Flow<List<String>>
+
+    @Query("SELECT * FROM notes WHERE tags LIKE '%' || :tag || '%' ORDER BY createdAt DESC")
+    fun getNotesByTag(tag: String): Flow<List<NoteEntity>>
+
+    @Query("SELECT * FROM notes WHERE authorName = :authorName ORDER BY createdAt DESC")
+    fun getNotesByAuthor(authorName: String): Flow<List<NoteEntity>>
 }

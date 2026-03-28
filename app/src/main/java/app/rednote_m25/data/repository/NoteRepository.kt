@@ -64,6 +64,28 @@ class NoteRepository @Inject constructor(
         }
     }
 
+    fun getAllTags(): Flow<List<String>> {
+        return noteDao.getAllTags().map { tagStrings ->
+            tagStrings.flatMap { it.split(",") }
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .distinct()
+                .sorted()
+        }
+    }
+
+    fun getNotesByTag(tag: String): Flow<List<Note>> {
+        return noteDao.getNotesByTag(tag).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
+    fun getNotesByAuthor(authorName: String): Flow<List<Note>> {
+        return noteDao.getNotesByAuthor(authorName).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
     private fun NoteEntity.toDomain(): Note {
         return Note(
             id = id,
