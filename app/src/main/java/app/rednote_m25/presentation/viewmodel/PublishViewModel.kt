@@ -3,12 +3,14 @@ package app.rednote_m25.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.rednote_m25.data.repository.NoteRepository
+import app.rednote_m25.data.repository.UserPreferencesRepository
 import app.rednote_m25.domain.model.Note
 import app.rednote_m25.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +28,8 @@ data class PublishUiState(
 
 @HiltViewModel
 class PublishViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PublishUiState())
@@ -63,11 +66,12 @@ class PublishViewModel @Inject constructor(
             return
         }
 
-        Logger.i("PublishViewModel", "Publishing note: ${state.title}")
+        Logger.i("PublishViewModel", "Publishing note")
 
         viewModelScope.launch {
             _uiState.update { it.copy(isPublishing = true, error = null) }
             try {
+                val userAvatar = userPreferencesRepository.userAvatarUrl.first()
                 val coverUrl = state.coverImageUrl.ifBlank {
                     "https://picsum.photos/seed/${System.currentTimeMillis()}/400/300"
                 }
@@ -86,7 +90,7 @@ class PublishViewModel @Inject constructor(
                     coverImageUrl = coverUrl,
                     imageUrls = imageList,
                     authorName = "当前用户",
-                    authorAvatarUrl = null,
+                    authorAvatarUrl = userAvatar.ifEmpty { null },
                     tags = state.tags.split(",").map { it.trim() }.filter { it.isNotEmpty() }
                 )
 
