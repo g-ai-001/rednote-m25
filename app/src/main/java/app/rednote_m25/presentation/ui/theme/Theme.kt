@@ -13,7 +13,7 @@ private val RednoteOrange = Color(0xFFFF9F43)
 private val RednoteYellow = Color(0xFFFECA57)
 private val RednoteGreen = Color(0xFF1DD1A1)
 private val RednoteBlue = Color(0xFF54A0FF)
-private val RednotePurple = Color(0xXP9B59B6)
+private val RednotePurple = Color(0xFF9B59B6)
 
 private val LightColorScheme = lightColorScheme(
     primary = RednoteRed,
