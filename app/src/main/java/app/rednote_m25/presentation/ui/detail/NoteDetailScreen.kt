@@ -18,13 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import app.rednote_m25.presentation.viewmodel.NoteDetailViewModel
-import java.text.SimpleDateFormat
-import java.util.*
+import app.rednote_m25.util.FormatUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,8 +31,6 @@ fun NoteDetailScreen(
     viewModel: NoteDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedImageIndex by remember { mutableIntStateOf(0) }
-    var showImageViewer by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -141,7 +137,7 @@ fun NoteDetailScreen(
                                             style = MaterialTheme.typography.titleSmall
                                         )
                                         Text(
-                                            text = formatDate(note.createdAt),
+                                            text = FormatUtils.formatDate(note.createdAt),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -232,22 +228,9 @@ private fun ActionButton(
             )
         }
         Text(
-            text = formatCount(count),
+            text = FormatUtils.formatCount(count),
             style = MaterialTheme.typography.bodySmall,
             color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
-}
-
-private fun formatCount(count: Int): String {
-    return when {
-        count >= 10000 -> String.format("%.1fW", count / 10000.0)
-        count >= 1000 -> String.format("%.1fW", count / 1000.0)
-        else -> count.toString()
-    }
-}
-
-private fun formatDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    return sdf.format(Date(timestamp))
 }

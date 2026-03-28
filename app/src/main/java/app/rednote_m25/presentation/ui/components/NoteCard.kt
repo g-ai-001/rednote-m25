@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import app.rednote_m25.domain.model.Note
+import app.rednote_m25.util.FormatUtils
 
 @Composable
 fun NoteCard(
@@ -94,20 +95,12 @@ fun NoteCard(
                     }
 
                     Text(
-                        text = formatCount(note.likeCount),
+                        text = FormatUtils.formatCount(note.likeCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         }
-    }
-}
-
-private fun formatCount(count: Int): String {
-    return when {
-        count >= 10000 -> String.format("%.1fW", count / 10000.0)
-        count >= 1000 -> String.format("%.1fK", count / 1000.0)
-        else -> count.toString()
     }
 }
