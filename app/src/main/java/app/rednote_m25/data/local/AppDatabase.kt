@@ -8,7 +8,7 @@ import app.rednote_m25.data.local.entity.NoteEntity
 @Database(
     entities = [NoteEntity::class],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao

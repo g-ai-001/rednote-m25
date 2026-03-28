@@ -38,13 +38,6 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     var selectedTab by remember { mutableStateOf(HomeTab.HOME) }
 
-    LaunchedEffect(selectedTab) {
-        if (selectedTab == HomeTab.PERSON) {
-            onCollectionClick()
-            selectedTab = HomeTab.HOME
-        }
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -81,7 +74,12 @@ fun HomeScreen(
                 HomeTab.entries.forEach { tab ->
                     NavigationBarItem(
                         selected = selectedTab == tab,
-                        onClick = { selectedTab = tab },
+                        onClick = {
+                            selectedTab = tab
+                            if (tab == HomeTab.PERSON) {
+                                onCollectionClick()
+                            }
+                        },
                         icon = {
                             Icon(
                                 imageVector = if (selectedTab == tab) tab.selectedIcon else tab.unselectedIcon,

@@ -30,11 +30,11 @@ interface NoteDao {
     @Query("DELETE FROM notes WHERE id = :id")
     suspend fun deleteNoteById(id: Long)
 
-    @Query("UPDATE notes SET isLiked = :isLiked, likeCount = likeCount + :delta WHERE id = :id")
-    suspend fun updateLikeStatus(id: Long, isLiked: Boolean, delta: Int)
+    @Query("UPDATE notes SET isLiked = :isLiked, likeCount = :newLikeCount WHERE id = :id")
+    suspend fun updateLikeStatus(id: Long, isLiked: Boolean, newLikeCount: Int)
 
-    @Query("UPDATE notes SET isCollected = :isCollected, collectCount = collectCount + :delta WHERE id = :id")
-    suspend fun updateCollectStatus(id: Long, isCollected: Boolean, delta: Int)
+    @Query("UPDATE notes SET isCollected = :isCollected, collectCount = :newCollectCount WHERE id = :id")
+    suspend fun updateCollectStatus(id: Long, isCollected: Boolean, newCollectCount: Int)
 
     @Query("SELECT * FROM notes WHERE isCollected = 1 ORDER BY updatedAt DESC")
     fun getCollectedNotes(): Flow<List<NoteEntity>>
