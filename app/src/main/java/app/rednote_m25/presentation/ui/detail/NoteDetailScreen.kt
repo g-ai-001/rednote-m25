@@ -1,8 +1,6 @@
 package app.rednote_m25.presentation.ui.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -114,21 +112,7 @@ fun NoteDetailScreen(
                                             .fillMaxWidth()
                                             .height(250.dp)
                                             .clip(RoundedCornerShape(12.dp)),
-                                        contentScale = ContentScale.Crop,
-                                        loading = {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                                            )
-                                        },
-                                        failure = {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .background(MaterialTheme.colorScheme.errorContainer)
-                                            )
-                                        }
+                                        contentScale = ContentScale.Crop
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
@@ -150,14 +134,7 @@ fun NoteDetailScreen(
                                             .size(40.dp)
                                             .clip(CircleShape)
                                             .background(MaterialTheme.colorScheme.surfaceVariant),
-                                        contentScale = ContentScale.Crop,
-                                        failure = {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .background(MaterialTheme.colorScheme.primaryContainer)
-                                            )
-                                        }
+                                        contentScale = ContentScale.Crop
                                     )
 
                                     Spacer(modifier = Modifier.width(10.dp))

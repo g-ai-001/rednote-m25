@@ -1,8 +1,6 @@
 package app.rednote_m25.presentation.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -49,21 +47,7 @@ fun NoteCard(
                         .fillMaxWidth()
                         .height(180.dp)
                         .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
-                    contentScale = ContentScale.Crop,
-                    loading = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                        )
-                    },
-                    failure = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.errorContainer)
-                        )
-                    }
+                    contentScale = ContentScale.Crop
                 )
             }
 
@@ -88,14 +72,7 @@ fun NoteCard(
                             .size(24.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.surfaceVariant),
-                        contentScale = ContentScale.Crop,
-                        failure = {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.primaryContainer)
-                            )
-                        }
+                        contentScale = ContentScale.Crop
                     )
 
                     Spacer(modifier = Modifier.width(6.dp))
