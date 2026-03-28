@@ -80,6 +80,10 @@ class NoteRepository @Inject constructor(
         }
     }
 
+    fun getNotesCountByTag(tag: String): Flow<Int> {
+        return noteDao.getNotesByTag(tag).map { entities -> entities.size }
+    }
+
     fun getNotesByAuthor(authorName: String): Flow<List<Note>> {
         return noteDao.getNotesByAuthor(authorName).map { entities ->
             entities.map { it.toDomain() }

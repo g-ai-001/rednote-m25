@@ -4,8 +4,6 @@ import app.rednote_m25.data.local.dao.CommentDao
 import app.rednote_m25.data.local.dao.NoteDao
 import app.rednote_m25.data.local.entity.CommentEntity
 import app.rednote_m25.data.local.entity.NoteEntity
-import app.rednote_m25.domain.model.Comment
-import app.rednote_m25.domain.model.Note
 import app.rednote_m25.util.Logger
 import kotlinx.coroutines.flow.first
 import org.json.JSONArray

@@ -5,6 +5,8 @@ import java.util.Date
 import java.util.Locale
 
 object FormatUtils {
+    const val CURRENT_USER_NAME = "当前用户"
+
     fun formatCount(count: Int): String {
         return when {
             count >= 10000 -> String.format("%.1fW", count / 10000.0)

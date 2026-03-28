@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,12 +42,12 @@ class TopicExploreViewModel @Inject constructor(
             try {
                 noteRepository.getAllTags().collect { tags ->
                     Logger.i("TopicExploreViewModel", "Loaded ${tags.size} tags")
-                    val topicItems = tags.mapIndexed { index, tag ->
-                        TopicItem(
-                            tag = tag,
-                            noteCount = (1..50).random()
-                        )
-                    }.sortedByDescending { it.noteCount }
+                    val topicItems = mutableListOf<TopicItem>()
+                    for (tag in tags) {
+                        val count = noteRepository.getNotesCountByTag(tag).first()
+                        topicItems.add(TopicItem(tag = tag, noteCount = count))
+                    }
+                    topicItems.sortedByDescending { it.noteCount }
                     _uiState.update { it.copy(topics = topicItems, isLoading = false) }
                 }
             } catch (e: Exception) {
