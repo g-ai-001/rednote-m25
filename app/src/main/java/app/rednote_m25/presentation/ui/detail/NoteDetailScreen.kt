@@ -1,18 +1,7 @@
 package app.rednote_m25.presentation.ui.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -20,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -31,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import app.rednote_m25.domain.model.Comment
 import app.rednote_m25.presentation.viewmodel.NoteDetailViewModel
 import app.rednote_m25.util.FormatUtils
 
@@ -38,6 +29,7 @@ import app.rednote_m25.util.FormatUtils
 @Composable
 fun NoteDetailScreen(
     onBackClick: () -> Unit,
+    onEditClick: (Long) -> Unit = {},
     viewModel: NoteDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -55,6 +47,14 @@ fun NoteDetailScreen(
                     }
                 },
                 actions = {
+                    uiState.note?.let { note ->
+                        IconButton(onClick = { onEditClick(note.id) }) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "编辑"
+                            )
+                        }
+                    }
                     IconButton(onClick = { }) {
                         Icon(
                             imageVector = Icons.Default.Share,
@@ -197,7 +197,7 @@ fun NoteDetailScreen(
                                     )
                                     ActionButton(
                                         icon = Icons.Outlined.ChatBubbleOutline,
-                                        count = note.commentCount,
+                                        count = uiState.comments.size,
                                         label = "评论",
                                         onClick = { }
                                     )
@@ -210,11 +210,108 @@ fun NoteDetailScreen(
                                 }
 
                                 Spacer(modifier = Modifier.height(24.dp))
+
+                                HorizontalDivider()
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Text(
+                                    text = "评论",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                        }
+
+                        items(uiState.comments) { comment ->
+                            CommentItem(
+                                comment = comment,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(80.dp))
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            OutlinedTextField(
+                                value = uiState.newCommentText,
+                                onValueChange = { viewModel.updateNewCommentText(it) },
+                                placeholder = { Text("添加评论...") },
+                                modifier = Modifier.weight(1f),
+                                singleLine = true,
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            IconButton(
+                                onClick = { viewModel.addComment() },
+                                enabled = uiState.newCommentText.isNotBlank()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Send,
+                                    contentDescription = "发送",
+                                    tint = if (uiState.newCommentText.isNotBlank())
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CommentItem(
+    comment: Comment,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) {
+        AsyncImage(
+            model = comment.authorAvatarUrl ?: "",
+            contentDescription = comment.authorName,
+            modifier = Modifier
+                .size(36.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = comment.authorName,
+                style = MaterialTheme.typography.labelMedium
+            )
+            Text(
+                text = comment.content,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = FormatUtils.formatDate(comment.createdAt),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

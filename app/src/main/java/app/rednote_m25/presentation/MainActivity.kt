@@ -16,6 +16,8 @@ import androidx.navigation.navArgument
 import app.rednote_m25.presentation.ui.category.CategoryScreen
 import app.rednote_m25.presentation.ui.collection.CollectionScreen
 import app.rednote_m25.presentation.ui.detail.NoteDetailScreen
+import app.rednote_m25.presentation.ui.edit.EditNoteScreen
+import app.rednote_m25.presentation.ui.explore.TopicExploreScreen
 import app.rednote_m25.presentation.ui.home.HomeScreen
 import app.rednote_m25.presentation.ui.profile.ProfileScreen
 import app.rednote_m25.presentation.ui.publish.PublishScreen
@@ -89,6 +91,18 @@ fun RednoteApp() {
                 onBackClick = { navController.popBackStack() },
                 onNoteClick = { noteId ->
                     navController.navigate("note_detail/$noteId")
+                },
+                onExploreClick = {
+                    navController.navigate("topic_explore")
+                }
+            )
+        }
+
+        composable("topic_explore") {
+            TopicExploreScreen(
+                onBackClick = { navController.popBackStack() },
+                onTopicClick = { tag ->
+                    navController.navigate("category?tag=$tag")
                 }
             )
         }
@@ -121,7 +135,22 @@ fun RednoteApp() {
             )
         ) {
             NoteDetailScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onEditClick = { noteId ->
+                    navController.navigate("edit_note/$noteId")
+                }
+            )
+        }
+
+        composable(
+            route = "edit_note/{noteId}",
+            arguments = listOf(
+                navArgument("noteId") { type = NavType.LongType }
+            )
+        ) {
+            EditNoteScreen(
+                onBackClick = { navController.popBackStack() },
+                onSaveSuccess = { navController.popBackStack() }
             )
         }
     }

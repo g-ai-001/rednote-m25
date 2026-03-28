@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import app.rednote_m25.presentation.viewmodel.CategoryViewModel
 fun CategoryScreen(
     onBackClick: () -> Unit,
     onNoteClick: (Long) -> Unit,
+    onExploreClick: () -> Unit = {},
     viewModel: CategoryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -38,6 +40,14 @@ fun CategoryScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "返回"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onExploreClick) {
+                        Icon(
+                            imageVector = Icons.Default.Explore,
+                            contentDescription = "话题探索"
                         )
                     }
                 },
