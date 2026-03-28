@@ -7,7 +7,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +28,7 @@ fun NoteCard(
     note: Note,
     onNoteClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
+    onCollectClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -96,6 +99,26 @@ fun NoteCard(
 
                     Text(
                         text = FormatUtils.formatCount(note.likeCount),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    IconButton(
+                        onClick = { onCollectClick(note.id, !note.isCollected) },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (note.isCollected) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                            contentDescription = "收藏",
+                            tint = if (note.isCollected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    Text(
+                        text = FormatUtils.formatCount(note.collectCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

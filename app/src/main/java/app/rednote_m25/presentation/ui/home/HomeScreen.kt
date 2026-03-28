@@ -3,6 +3,7 @@ package app.rednote_m25.presentation.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -30,10 +31,19 @@ enum class HomeTab(
 @Composable
 fun HomeScreen(
     onNoteClick: (Long) -> Unit,
+    onSearchClick: () -> Unit = {},
+    onCollectionClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selectedTab by remember { mutableStateOf(HomeTab.HOME) }
+
+    LaunchedEffect(selectedTab) {
+        if (selectedTab == HomeTab.PERSON) {
+            onCollectionClick()
+            selectedTab = HomeTab.HOME
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -45,10 +55,16 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onSearchClick) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "搜索"
+                        )
+                    }
+                    IconButton(onClick = onCollectionClick) {
+                        Icon(
+                            imageVector = Icons.Default.Bookmark,
+                            contentDescription = "收藏"
                         )
                     }
                 },
@@ -110,7 +126,8 @@ fun HomeScreen(
                     StaggeredNotesGrid(
                         notes = uiState.notes,
                         onNoteClick = onNoteClick,
-                        onLikeClick = { id, isLiked -> viewModel.toggleLike(id, isLiked) }
+                        onLikeClick = { id, isLiked -> viewModel.toggleLike(id, isLiked) },
+                        onCollectClick = { id, isCollected -> viewModel.toggleCollect(id, isCollected) }
                     )
                 }
             }

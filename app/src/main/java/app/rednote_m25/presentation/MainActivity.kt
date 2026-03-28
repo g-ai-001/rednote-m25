@@ -13,8 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import app.rednote_m25.presentation.ui.collection.CollectionScreen
 import app.rednote_m25.presentation.ui.detail.NoteDetailScreen
 import app.rednote_m25.presentation.ui.home.HomeScreen
+import app.rednote_m25.presentation.ui.search.SearchScreen
 import app.rednote_m25.presentation.ui.theme.RednoteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,6 +45,30 @@ fun RednoteApp() {
     ) {
         composable("home") {
             HomeScreen(
+                onNoteClick = { noteId ->
+                    navController.navigate("note_detail/$noteId")
+                },
+                onSearchClick = {
+                    navController.navigate("search")
+                },
+                onCollectionClick = {
+                    navController.navigate("collection")
+                }
+            )
+        }
+
+        composable("search") {
+            SearchScreen(
+                onBackClick = { navController.popBackStack() },
+                onNoteClick = { noteId ->
+                    navController.navigate("note_detail/$noteId")
+                }
+            )
+        }
+
+        composable("collection") {
+            CollectionScreen(
+                onBackClick = { navController.popBackStack() },
                 onNoteClick = { noteId ->
                     navController.navigate("note_detail/$noteId")
                 }

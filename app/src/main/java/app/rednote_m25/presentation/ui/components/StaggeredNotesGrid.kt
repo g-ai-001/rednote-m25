@@ -12,6 +12,7 @@ fun StaggeredNotesGrid(
     notes: List<Note>,
     onNoteClick: (Long) -> Unit,
     onLikeClick: (Long, Boolean) -> Unit,
+    onCollectClick: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalStaggeredGrid(
@@ -28,7 +29,8 @@ fun StaggeredNotesGrid(
             NoteCard(
                 note = note,
                 onNoteClick = onNoteClick,
-                onLikeClick = onLikeClick
+                onLikeClick = onLikeClick,
+                onCollectClick = onCollectClick
             )
         }
     }
