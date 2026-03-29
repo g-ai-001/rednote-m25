@@ -1,5 +1,9 @@
 package app.rednote_m25.presentation.ui.detail
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,13 +21,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import app.rednote_m25.domain.model.Comment
+import app.rednote_m25.domain.model.Note
+import app.rednote_m25.presentation.ui.theme.RednoteRed
 import app.rednote_m25.presentation.viewmodel.NoteDetailViewModel
 import app.rednote_m25.util.FormatUtils
+import app.rednote_m25.util.Logger
+import java.io.File
+import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +46,18 @@ fun NoteDetailScreen(
     viewModel: NoteDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    var shareBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    val isDarkTheme = MaterialTheme.colorScheme.background == Color(0xFF1A1A1A)
+
+    fun shareNote(note: Note) {
+        viewModel.incrementShareCount()
+        val bitmap = createShareCardBitmapInternal(note, isDarkTheme)
+        shareBitmap = bitmap
+        bitmap?.let { bmp ->
+            shareImage(context, bmp, note.title)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -54,18 +79,18 @@ fun NoteDetailScreen(
                                 contentDescription = "编辑"
                             )
                         }
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "分享"
-                        )
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreHoriz,
-                            contentDescription = "更多"
-                        )
+                        IconButton(onClick = { shareNote(note) }) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "分享"
+                            )
+                        }
+                        IconButton(onClick = { }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreHoriz,
+                                contentDescription = "更多"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -205,7 +230,7 @@ fun NoteDetailScreen(
                                         icon = Icons.Outlined.Share,
                                         count = note.shareCount,
                                         label = "分享",
-                                        onClick = { }
+                                        onClick = { shareNote(note) }
                                     )
                                 }
 
@@ -339,5 +364,154 @@ private fun ActionButton(
             style = MaterialTheme.typography.bodySmall,
             color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+private fun createShareCardBitmapInternal(note: Note, isDarkTheme: Boolean): Bitmap {
+    val width = 1080
+    val height = 1920
+    val bitmap = Bitmap.createBitmap(width, height)
+    val canvas = Canvas(bitmap)
+
+    val bgColor = if (isDarkTheme) android.graphics.Color.parseColor("#FF1A1A1A") else android.graphics.Color.parseColor("#FFFFFBFB")
+    val textColor = if (isDarkTheme) android.graphics.Color.parseColor("#FFFFFBFB") else android.graphics.Color.parseColor("#FF1A1A1A")
+    val secondaryColor = if (isDarkTheme) android.graphics.Color.parseColor("#FFAAAAAA") else android.graphics.Color.parseColor("#FF666666")
+
+    canvas.drawColor(bgColor)
+
+    val padding = 60f
+
+    val rednoteRed = RednoteRed.toArgb()
+
+    val brandPaint = Paint().apply {
+        color = rednoteRed
+        isAntiAlias = true
+        textSize = 48f
+        typeface = Typeface.DEFAULT_BOLD
+    }
+
+    canvas.drawText("RED", padding, padding + 60f, brandPaint)
+    brandPaint.textSize = 48f
+    canvas.drawText("笔记", padding + 140f, padding + 60f, brandPaint)
+
+    val titlePaint = Paint().apply {
+        color = textColor
+        isAntiAlias = true
+        textSize = 72f
+        typeface = Typeface.DEFAULT_BOLD
+    }
+
+    val titleLines = wrapTextForShare(note.title, titlePaint, 960f)
+    var y = padding + 200f
+    for (line in titleLines) {
+        canvas.drawText(line, padding, y, titlePaint)
+        y += 100f
+    }
+
+    val contentPaint = Paint().apply {
+        color = secondaryColor
+        isAntiAlias = true
+        textSize = 48f
+        typeface = Typeface.DEFAULT
+    }
+
+    val maxContentLines = 8
+    val contentLines = wrapTextForShare(note.content, contentPaint, 960f).take(maxContentLines)
+    y += 40f
+    for (line in contentLines) {
+        canvas.drawText(line, padding, y, contentPaint)
+        y += 70f
+    }
+
+    val tagY = height - 300f
+    if (note.tags.isNotEmpty()) {
+        val tagPaint = Paint().apply {
+            color = rednoteRed
+            isAntiAlias = true
+            textSize = 40f
+            typeface = Typeface.DEFAULT
+        }
+
+        val tagsText = note.tags.take(5).joinToString(" ") { "#$it" }
+        canvas.drawText(tagsText, padding, tagY, tagPaint)
+    }
+
+    val footerY = height - 150f
+    val footerPaint = Paint().apply {
+        color = secondaryColor
+        isAntiAlias = true
+        textSize = 36f
+        typeface = Typeface.DEFAULT
+    }
+
+    val footerText = "来自 RED笔记 · ${FormatUtils.formatDate(note.createdAt)}"
+    canvas.drawText(footerText, padding, footerY, footerPaint)
+
+    val statsY = height - 80f
+    val statsPaint = Paint().apply {
+        color = rednoteRed
+        isAntiAlias = true
+        textSize = 36f
+        typeface = Typeface.DEFAULT_BOLD
+    }
+
+    val likeText = "♥ ${note.likeCount}"
+    val collectText = "★ ${note.collectCount}"
+    canvas.drawText(likeText, padding, statsY, statsPaint)
+    canvas.drawText(collectText, padding + 200f, statsY, statsPaint)
+
+    return bitmap
+}
+
+private fun wrapTextForShare(text: String, paint: Paint, maxWidth: Float): List<String> {
+    val lines = mutableListOf<String>()
+    if (text.isEmpty()) return lines
+
+    val sb = StringBuilder()
+    for (char in text) {
+        val testLine = sb.toString() + char
+        val textWidth = paint.measureText(testLine)
+
+        if (textWidth > maxWidth && sb.isNotEmpty()) {
+            lines.add(sb.toString())
+            sb.clear()
+            sb.append(char)
+        } else {
+            sb.append(char)
+        }
+    }
+
+    if (sb.isNotEmpty()) {
+        lines.add(sb.toString())
+    }
+
+    return lines
+}
+
+private fun shareImage(context: Context, bitmap: Bitmap, title: String) {
+    try {
+        val cachePath = File(context.cacheDir, "images")
+        cachePath.mkdirs()
+        val file = File(cachePath, "share_note_${System.currentTimeMillis()}.png")
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+
+        val contentUri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            putExtra(Intent.EXTRA_SUBJECT, title)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        context.startActivity(Intent.createChooser(shareIntent, "分享笔记"))
+    } catch (e: Exception) {
+        Logger.e("NoteDetailScreen", "Failed to share image", e)
     }
 }

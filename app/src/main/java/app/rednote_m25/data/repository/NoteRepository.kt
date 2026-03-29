@@ -52,6 +52,10 @@ class NoteRepository @Inject constructor(
         noteDao.updateCollectStatus(id, isCollected, newCollectCount)
     }
 
+    suspend fun incrementShareCount(id: Long) {
+        noteDao.incrementShareCount(id)
+    }
+
     fun getCollectedNotes(): Flow<List<Note>> {
         return noteDao.getCollectedNotes().map { entities ->
             entities.map { it.toDomain() }

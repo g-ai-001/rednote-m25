@@ -83,6 +83,14 @@ class NoteDetailViewModel @Inject constructor(
         }
     }
 
+    fun incrementShareCount() {
+        val note = _uiState.value.note ?: return
+        Logger.i("NoteDetailViewModel", "incrementShareCount: noteId=${note.id}")
+        viewModelScope.launch {
+            noteRepository.incrementShareCount(note.id)
+        }
+    }
+
     fun updateNewCommentText(text: String) {
         _uiState.update { it.copy(newCommentText = text) }
     }

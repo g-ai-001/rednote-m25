@@ -36,6 +36,9 @@ interface NoteDao {
     @Query("UPDATE notes SET isCollected = :isCollected, collectCount = :newCollectCount WHERE id = :id")
     suspend fun updateCollectStatus(id: Long, isCollected: Boolean, newCollectCount: Int)
 
+    @Query("UPDATE notes SET shareCount = shareCount + 1 WHERE id = :id")
+    suspend fun incrementShareCount(id: Long)
+
     @Query("SELECT * FROM notes WHERE isCollected = 1 ORDER BY updatedAt DESC")
     fun getCollectedNotes(): Flow<List<NoteEntity>>
 
