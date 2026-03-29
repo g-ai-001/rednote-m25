@@ -65,10 +65,10 @@
 - [x] 修复TopicExploreViewModel假数据问题，实现真实noteCount统计
 - [x] 确保CI构建通过
 
-### 0.5.2 - 重构优化 (进行中)
+### 0.5.2 - 重构优化 (已完成)
 - [x] 修复TopicExploreViewModel排序bug（sortedByDescending结果未赋值）
 - [x] 统一使用FormatUtils.CURRENT_USER_NAME常量替换硬编码字符串
-- [ ] 确保CI构建通过
+- [x] 确保CI构建通过
 
 ### 中期规划 (0.6.x)
 - 笔记分享功能

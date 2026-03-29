@@ -34,6 +34,11 @@
 
 ## 版本历史
 
+### v0.5.2 (2026-03-29)
+- 重构优化代码质量和数据准确性
+- 修复TopicExploreViewModel排序bug
+- 统一使用CURRENT_USER_NAME常量替换硬编码字符串
+
 ### v0.5.1 (2026-03-29)
 - 重构优化代码质量和数据准确性
 - 移除ExportImportRepository未使用的imports
