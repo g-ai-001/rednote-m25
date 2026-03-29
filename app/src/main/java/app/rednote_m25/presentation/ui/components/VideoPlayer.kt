@@ -27,8 +27,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
-private const val VIDEO_ASPECT_RATIO = 16f / 9f
-
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(

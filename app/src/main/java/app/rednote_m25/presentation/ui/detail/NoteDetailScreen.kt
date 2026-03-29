@@ -50,13 +50,11 @@ fun NoteDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    var shareBitmap by remember { mutableStateOf<Bitmap?>(null) }
     val isDarkTheme = MaterialTheme.colorScheme.background == Color(0xFF1A1A1A)
 
     fun shareNote(note: Note) {
         viewModel.incrementShareCount()
         val bitmap = createShareCardBitmapInternal(note, isDarkTheme)
-        shareBitmap = bitmap
         bitmap?.let { bmp ->
             shareImage(context, bmp, note.title)
         }
