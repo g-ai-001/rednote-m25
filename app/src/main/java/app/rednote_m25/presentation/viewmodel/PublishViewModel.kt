@@ -76,6 +76,18 @@ class PublishViewModel @Inject constructor(
         }
     }
 
+    fun loadDraftById(draftId: Long) {
+        viewModelScope.launch {
+            try {
+                val draft = noteRepository.getNoteByIdOnce(draftId)
+                draft?.let { loadDraft(it) }
+            } catch (e: Exception) {
+                Logger.e("PublishViewModel", "Failed to load draft", e)
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
     fun saveDraft() {
         val state = _uiState.value
         Logger.i("PublishViewModel", "Saving draft")

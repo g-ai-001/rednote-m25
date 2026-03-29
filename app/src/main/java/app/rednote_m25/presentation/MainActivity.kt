@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,9 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.rednote_m25.data.repository.AppLocale
 import app.rednote_m25.data.repository.AppThemeMode
-import app.rednote_m25.data.repository.NoteRepository
 import app.rednote_m25.data.repository.UserPreferencesRepository
-import app.rednote_m25.domain.model.Note
 import app.rednote_m25.presentation.ui.category.CategoryScreen
 import app.rednote_m25.presentation.ui.collection.CollectionScreen
 import app.rednote_m25.presentation.ui.detail.NoteDetailScreen
@@ -29,6 +28,7 @@ import app.rednote_m25.presentation.ui.profile.ProfileScreen
 import app.rednote_m25.presentation.ui.publish.PublishScreen
 import app.rednote_m25.presentation.ui.search.SearchScreen
 import app.rednote_m25.presentation.ui.theme.RednoteTheme
+import app.rednote_m25.presentation.viewmodel.PublishViewModel
 import app.rednote_m25.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,9 +38,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
-
-    @Inject
-    lateinit var noteRepository: NoteRepository
 
     private var previousLocaleMode: AppLocale = AppLocale.SYSTEM
 
@@ -153,7 +150,7 @@ fun RednoteApp() {
                     navController.navigate("note_detail/$noteId")
                 },
                 onPublishClick = {
-                    navController.navigate("publish")
+                    navController.navigate("publish/0")
                 },
                 onDraftsClick = {
                     navController.navigate("drafts")
@@ -161,7 +158,22 @@ fun RednoteApp() {
             )
         }
 
-        composable("publish") {
+        composable(
+            route = "publish/{draftId}",
+            arguments = listOf(
+                navArgument("draftId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val draftId = backStackEntry.arguments?.getLong("draftId") ?: 0L
+            val viewModel: PublishViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+
+            LaunchedEffect(draftId) {
+                if (draftId > 0 && uiState.draftId == null) {
+                    viewModel.loadDraftById(draftId)
+                }
+            }
+
             PublishScreen(
                 onBackClick = { navController.popBackStack() },
                 onPublishSuccess = {
@@ -174,30 +186,8 @@ fun RednoteApp() {
             DraftScreen(
                 onBackClick = { navController.popBackStack() },
                 onEditDraft = { draftId ->
-                    navController.navigate("edit_draft/$draftId")
+                    navController.navigate("publish/$draftId")
                 }
-            )
-        }
-
-        composable(
-            route = "edit_draft/{draftId}",
-            arguments = listOf(
-                navArgument("draftId") { type = NavType.LongType }
-            )
-        ) { backStackEntry ->
-            val draftId = backStackEntry.arguments?.getLong("draftId") ?: 0L
-            var draftNote by remember { mutableStateOf<Note?>(null) }
-
-            LaunchedEffect(draftId) {
-                draftNote = noteRepository.getNoteByIdOnce(draftId)
-            }
-
-            PublishScreen(
-                onBackClick = { navController.popBackStack() },
-                onPublishSuccess = {
-                    navController.popBackStack("drafts", inclusive = false)
-                },
-                editDraft = draftNote
             )
         }
 

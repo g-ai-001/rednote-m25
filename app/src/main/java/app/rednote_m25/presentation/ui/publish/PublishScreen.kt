@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import app.rednote_m25.domain.model.Note
 import app.rednote_m25.presentation.viewmodel.PublishViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,15 +20,10 @@ import app.rednote_m25.presentation.viewmodel.PublishViewModel
 fun PublishScreen(
     onBackClick: () -> Unit,
     onPublishSuccess: () -> Unit,
-    editDraft: Note? = null,
     viewModel: PublishViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
-
-    LaunchedEffect(editDraft) {
-        editDraft?.let { viewModel.loadDraft(it) }
-    }
 
     LaunchedEffect(uiState.publishSuccess) {
         if (uiState.publishSuccess) {
@@ -40,7 +34,7 @@ fun PublishScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (editDraft != null) "编辑草稿" else "发布笔记") },
+                title = { Text(if (uiState.draftId != null) "编辑草稿" else "发布笔记") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
