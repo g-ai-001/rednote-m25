@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.rednote_m25.data.repository.AppLocale
 import app.rednote_m25.data.repository.AppThemeMode
 import app.rednote_m25.data.repository.ExportImportRepository
 import app.rednote_m25.data.repository.NoteRepository
@@ -30,6 +31,7 @@ data class ProfileUiState(
     val error: String? = null,
     val userAvatarUrl: String = "",
     val themeMode: AppThemeMode = AppThemeMode.SYSTEM,
+    val localeMode: AppLocale = AppLocale.SYSTEM,
     val showDeleteDialog: Boolean = false,
     val noteToDelete: Note? = null,
     val exportSuccess: String? = null,
@@ -65,6 +67,7 @@ class ProfileViewModel @Inject constructor(
         loadMyCollections()
         loadUserAvatar()
         loadThemeMode()
+        loadLocaleMode()
     }
 
     private fun loadMyNotes() {
@@ -107,6 +110,14 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferencesRepository.themeMode.collect { mode ->
                 _uiState.update { it.copy(themeMode = mode) }
+            }
+        }
+    }
+
+    private fun loadLocaleMode() {
+        viewModelScope.launch {
+            userPreferencesRepository.localeMode.collect { mode ->
+                _uiState.update { it.copy(localeMode = mode) }
             }
         }
     }
@@ -158,6 +169,13 @@ class ProfileViewModel @Inject constructor(
         Logger.i("ProfileViewModel", "Updating theme mode: $mode")
         viewModelScope.launch {
             userPreferencesRepository.updateThemeMode(mode)
+        }
+    }
+
+    fun updateLocaleMode(mode: AppLocale) {
+        Logger.i("ProfileViewModel", "Updating locale mode: $mode")
+        viewModelScope.launch {
+            userPreferencesRepository.updateLocaleMode(mode)
         }
     }
 

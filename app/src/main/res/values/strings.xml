@@ -1,4 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">rednote</string>
+
+    <!-- 通用 -->
+    <string name="back">返回</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="delete">删除</string>
+    <string name="save">保存</string>
+    <string name="settings">设置</string>
+    <string name="more">更多</string>
+    <string name="publish">发布</string>
+    <string name="search">搜索</string>
+    <string name="check">已选择</string>
+
+    <!-- 首页 -->
+    <string name="home_title">首页</string>
+    <string name="home_empty">暂无笔记</string>
+
+    <!-- 笔记详情 -->
+    <string name="note_detail_title">笔记详情</string>
+    <string name="note_like">点赞</string>
+    <string name="note_collect">收藏</string>
+    <string name="note_share">分享</string>
+    <string name="note_comment">评论</string>
+    <string name="note_edit">编辑</string>
+    <string name="note_delete">删除笔记</string>
+    <string name="note_delete_confirm">确定要删除这篇笔记吗？删除后无法恢复。</string>
+    <string name="note_share_title">分享笔记</string>
+    <string name="note_share_success">分享图片已保存</string>
+
+    <!-- 评论 -->
+    <string name="comment_title">评论</string>
+    <string name="comment_empty">还没有评论</string>
+    <string name="comment_hint">添加评论...</string>
+    <string name="comment_send">发送</string>
+
+    <!-- 搜索 -->
+    <string name="search_hint">搜索笔记标题或内容</string>
+    <string name="search_empty">暂无搜索结果</string>
+    <string name="search_recent">最近搜索</string>
+
+    <!-- 收藏 -->
+    <string name="collection_title">我的收藏</string>
+    <string name="collection_empty">还没有收藏笔记</string>
+
+    <!-- 分类 -->
+    <string name="category_title">分类浏览</string>
+    <string name="category_all">全部</string>
+    <string name="explore_title">话题探索</string>
+    <string name="explore_empty">暂无话题</string>
+
+    <!-- 个人主页 -->
+    <string name="profile_title">个人主页</string>
+    <string name="my_notes">我的笔记</string>
+    <string name="my_collections">我的收藏</string>
+    <string name="profile_empty_notes">还没有发布笔记</string>
+    <string name="profile_empty_collections">还没有收藏笔记</string>
+    <string name="profile_bio">记录生活，分享美好</string>
+    <string name="change_avatar">修改头像</string>
+    <string name="select_avatar">选择头像</string>
+
+    <!-- 发布 -->
+    <string name="publish_title">发布笔记</string>
+    <string name="publish_note_title">标题</string>
+    <string name="publish_note_title_hint">添加标题</string>
+    <string name="publish_note_content">内容</string>
+    <string name="publish_note_content_hint">分享这一刻...</string>
+    <string name="publish_note_cover">封面图片URL（可选）</string>
+    <string name="publish_note_cover_hint">输入图片链接</string>
+    <string name="publish_note_tags">标签（用逗号分隔）</string>
+    <string name="publish_note_tags_hint">例如：旅行,美食,摄影</string>
+    <string name="publish_success">发布成功</string>
+    <string name="publish_error">发布失败</string>
+
+    <!-- 编辑 -->
+    <string name="edit_title">编辑笔记</string>
+    <string name="edit_save_success">保存成功</string>
+    <string name="edit_save_error">保存失败</string>
+
+    <!-- 数据管理 -->
+    <string name="export_data">导出数据</string>
+    <string name="import_data">导入数据</string>
+    <string name="backup_to_storage">备份到存储</string>
+    <string name="restore_from_storage">从存储恢复</string>
+    <string name="import_success">导入成功：%1$d篇笔记，%2$d条评论</string>
+    <string name="import_failed">导入失败：%1$s</string>
+    <string name="backup_success">备份成功</string>
+    <string name="backup_failed">备份失败：%1$s</string>
+    <string name="restore_success">恢复成功：%1$d篇笔记，%2$d条评论</string>
+    <string name="restore_failed">恢复失败：%1$s</string>
+    <string name="backup_file_empty">备份文件为空</string>
+    <string name="user_cancelled">用户取消</string>
+
+    <!-- 主题设置 -->
+    <string name="theme_settings">主题设置</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色模式</string>
+    <string name="theme_dark">深色模式</string>
+
+    <!-- 语言设置 -->
+    <string name="language_settings">语言设置</string>
+    <string name="language_system">跟随系统</string>
+    <string name="language_chinese">简体中文</string>
+    <string name="language_english">English</string>
+
+    <!-- 格式化 -->
+    <string name="likes_count">%1$d赞</string>
+    <string name="comments_count">%1$d评论</string>
 </resources>

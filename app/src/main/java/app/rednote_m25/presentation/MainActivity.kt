@@ -6,15 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import app.rednote_m25.data.repository.AppLocale
 import app.rednote_m25.data.repository.AppThemeMode
 import app.rednote_m25.data.repository.UserPreferencesRepository
 import app.rednote_m25.presentation.ui.category.CategoryScreen
@@ -27,6 +26,7 @@ import app.rednote_m25.presentation.ui.profile.ProfileScreen
 import app.rednote_m25.presentation.ui.publish.PublishScreen
 import app.rednote_m25.presentation.ui.search.SearchScreen
 import app.rednote_m25.presentation.ui.theme.RednoteTheme
+import app.rednote_m25.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -36,11 +36,23 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
+    private var previousLocaleMode: AppLocale = AppLocale.SYSTEM
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val themeMode by userPreferencesRepository.themeMode.collectAsState(initial = AppThemeMode.SYSTEM)
+            val localeMode by userPreferencesRepository.localeMode.collectAsState(initial = AppLocale.SYSTEM)
+
+            LaunchedEffect(localeMode) {
+                if (previousLocaleMode != AppLocale.SYSTEM && localeMode != previousLocaleMode) {
+                    previousLocaleMode = localeMode
+                    recreate()
+                }
+                previousLocaleMode = localeMode
+            }
+
             RednoteTheme(themeMode = themeMode) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     RednoteApp()
@@ -48,7 +60,17 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        val localeMode = try {
+            val prefs = newBase.getSharedPreferences("user_preferences", android.content.Context.MODE_PRIVATE)
+            val localeName = prefs.getString("locale_mode", AppLocale.SYSTEM.name) ?: AppLocale.SYSTEM.name
+            AppLocale.valueOf(localeName)
+        } catch (e: Exception) {
+            AppLocale.SYSTEM
+        }
+        super.attachBaseContext(LocaleManager.applyLocale(newBase, localeMode))
+    }
 
 @Composable
 fun RednoteApp() {
