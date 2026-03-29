@@ -40,6 +40,12 @@
 
 ## 版本历史
 
+### v0.9.1 (2026-03-29)
+- 修复SearchViewModel搜索输入缺少debouncing问题
+- 修复TopicExploreViewModel N+1查询性能问题
+- 修复VideoPlayer编译错误
+- 清理VideoPlayer重复import
+
 ### v0.9.0 (2026-03-29)
 - 添加视频播放功能，支持在笔记中播放视频
 - 添加草稿箱功能，支持保存和管理未发布的笔记草稿
