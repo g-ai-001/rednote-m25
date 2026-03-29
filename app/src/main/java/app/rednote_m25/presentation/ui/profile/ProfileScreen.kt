@@ -30,6 +30,9 @@ import app.rednote_m25.presentation.ui.components.StaggeredNotesGrid
 import app.rednote_m25.presentation.viewmodel.ProfileTab
 import app.rednote_m25.presentation.viewmodel.ProfileViewModel
 import app.rednote_m25.util.FormatUtils
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +64,18 @@ fun ProfileScreen(
         }
     }
 
+    val backupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { viewModel.onBackupCreated(it) } ?: viewModel.onBackupError("用户取消")
+    }
+
+    val restoreLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { viewModel.restoreFromUri(it) }
+    }
+
     LaunchedEffect(uiState.importSuccess) {
         uiState.importSuccess?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -73,6 +88,44 @@ fun ProfileScreen(
             Toast.makeText(context, "导入失败: $it", Toast.LENGTH_SHORT).show()
             viewModel.clearImportError()
         }
+    }
+
+    LaunchedEffect(uiState.backupSuccess) {
+        uiState.backupSuccess?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearBackupSuccess()
+        }
+    }
+
+    LaunchedEffect(uiState.backupError) {
+        uiState.backupError?.let {
+            Toast.makeText(context, "备份失败: $it", Toast.LENGTH_SHORT).show()
+            viewModel.clearBackupError()
+        }
+    }
+
+    LaunchedEffect(uiState.restoreSuccess) {
+        uiState.restoreSuccess?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearRestoreSuccess()
+        }
+    }
+
+    LaunchedEffect(uiState.restoreError) {
+        uiState.restoreError?.let {
+            Toast.makeText(context, "恢复失败: $it", Toast.LENGTH_SHORT).show()
+            viewModel.clearRestoreError()
+        }
+    }
+
+    fun startBackup() {
+        val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+        val fileName = "rednote_backup_${dateFormat.format(Date())}.json"
+        backupLauncher.launch(fileName)
+    }
+
+    fun startRestore() {
+        restoreLauncher.launch(arrayOf("application/json"))
     }
 
     Scaffold(
@@ -125,6 +178,27 @@ fun ProfileScreen(
                             },
                             leadingIcon = {
                                 Icon(Icons.Default.Download, contentDescription = null)
+                            }
+                        )
+                        HorizontalDivider()
+                        DropdownMenuItem(
+                            text = { Text("备份到存储") },
+                            onClick = {
+                                showExportImportMenu = false
+                                startBackup()
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Default.Backup, contentDescription = null)
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("从存储恢复") },
+                            onClick = {
+                                showExportImportMenu = false
+                                startRestore()
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Default.Restore, contentDescription = null)
                             }
                         )
                     }

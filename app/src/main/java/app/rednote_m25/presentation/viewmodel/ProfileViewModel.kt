@@ -34,7 +34,11 @@ data class ProfileUiState(
     val noteToDelete: Note? = null,
     val exportSuccess: String? = null,
     val importSuccess: String? = null,
-    val importError: String? = null
+    val importError: String? = null,
+    val backupSuccess: String? = null,
+    val backupError: String? = null,
+    val restoreSuccess: String? = null,
+    val restoreError: String? = null
 )
 
 enum class ProfileTab {
@@ -223,5 +227,87 @@ class ProfileViewModel @Inject constructor(
 
     fun clearImportError() {
         _uiState.update { it.copy(importError = null) }
+    }
+
+    fun getBackupData(): String? {
+        Logger.i("ProfileViewModel", "Getting backup data")
+        var result: String? = null
+        viewModelScope.launch {
+            try {
+                result = exportImportRepository.exportAllData()
+                Logger.i("ProfileViewModel", "Backup data prepared successfully")
+            } catch (e: Exception) {
+                Logger.e("ProfileViewModel", "Failed to prepare backup data", e)
+                _uiState.update { it.copy(backupError = e.message) }
+            }
+        }
+        return result
+    }
+
+    fun onBackupCreated(uri: android.net.Uri) {
+        Logger.i("ProfileViewModel", "Backup created at: $uri")
+        viewModelScope.launch {
+            try {
+                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    val jsonData = exportImportRepository.exportAllData()
+                    outputStream.write(jsonData.toByteArray())
+                }
+                _uiState.update { it.copy(backupSuccess = "备份成功") }
+                Logger.i("ProfileViewModel", "Backup written successfully")
+            } catch (e: Exception) {
+                Logger.e("ProfileViewModel", "Failed to write backup", e)
+                _uiState.update { it.copy(backupError = e.message) }
+            }
+        }
+    }
+
+    fun onBackupError(error: String?) {
+        Logger.e("ProfileViewModel", "Backup failed: $error")
+        _uiState.update { it.copy(backupError = error ?: "备份失败") }
+    }
+
+    fun restoreFromUri(uri: android.net.Uri) {
+        Logger.i("ProfileViewModel", "Restoring from: $uri")
+        viewModelScope.launch {
+            try {
+                val jsonData = context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
+                if (jsonData.isNullOrEmpty()) {
+                    _uiState.update { it.copy(restoreError = "备份文件为空") }
+                    return@launch
+                }
+                when (val result = exportImportRepository.importData(jsonData)) {
+                    is ExportImportRepository.ImportResult.Success -> {
+                        val message = "恢复成功：${result.notesCount}篇笔记，${result.commentsCount}条评论"
+                        _uiState.update { it.copy(restoreSuccess = message) }
+                        Logger.i("ProfileViewModel", message)
+                        loadMyNotes()
+                        loadMyCollections()
+                    }
+                    is ExportImportRepository.ImportResult.Error -> {
+                        _uiState.update { it.copy(restoreError = result.message) }
+                        Logger.e("ProfileViewModel", "Restore failed: ${result.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                Logger.e("ProfileViewModel", "Failed to restore", e)
+                _uiState.update { it.copy(restoreError = e.message) }
+            }
+        }
+    }
+
+    fun clearBackupSuccess() {
+        _uiState.update { it.copy(backupSuccess = null) }
+    }
+
+    fun clearBackupError() {
+        _uiState.update { it.copy(backupError = null) }
+    }
+
+    fun clearRestoreSuccess() {
+        _uiState.update { it.copy(restoreSuccess = null) }
+    }
+
+    fun clearRestoreError() {
+        _uiState.update { it.copy(restoreError = null) }
     }
 }
