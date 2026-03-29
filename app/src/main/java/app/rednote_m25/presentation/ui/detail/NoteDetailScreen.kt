@@ -125,7 +125,7 @@ fun NoteDetailScreen(
                     )
                 }
                 uiState.note != null -> {
-                    uiState.note.let { note ->
+                    val note = uiState.note!!
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -297,9 +297,8 @@ fun NoteDetailScreen(
                                 )
                             }
                         }
-                    }  // LazyColumn
-                    }  // let note
-                }  // when note != null
+                    }
+                }
             }
         }
     }
