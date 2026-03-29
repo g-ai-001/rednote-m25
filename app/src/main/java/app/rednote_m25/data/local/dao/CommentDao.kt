@@ -9,6 +9,9 @@ interface CommentDao {
     @Query("SELECT * FROM comments WHERE noteId = :noteId ORDER BY createdAt DESC")
     fun getCommentsByNoteId(noteId: Long): Flow<List<CommentEntity>>
 
+    @Query("SELECT * FROM comments ORDER BY createdAt DESC")
+    suspend fun getAllComments(): List<CommentEntity>
+
     @Query("SELECT COUNT(*) FROM comments WHERE noteId = :noteId")
     suspend fun getCommentCount(noteId: Long): Int
 

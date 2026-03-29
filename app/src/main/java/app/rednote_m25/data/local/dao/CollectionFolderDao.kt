@@ -42,4 +42,21 @@ interface CollectionFolderDao {
 
     @Query("SELECT COUNT(*) FROM note_collection_folders WHERE folderId = :folderId")
     fun getNoteCountInFolder(folderId: Long): Flow<Int>
+
+    @Query("""
+        SELECT cf.*, COUNT(ncf.noteId) as noteCount
+        FROM collection_folders cf
+        LEFT JOIN note_collection_folders ncf ON cf.id = ncf.folderId
+        GROUP BY cf.id
+        ORDER BY cf.updatedAt DESC
+    """)
+    fun getAllFoldersWithNoteCounts(): Flow<List<CollectionFolderWithCount>>
 }
+
+data class CollectionFolderWithCount(
+    val id: Long,
+    val name: String,
+    val createdAt: Long,
+    val updatedAt: Long,
+    val noteCount: Int
+)

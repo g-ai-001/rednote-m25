@@ -115,6 +115,7 @@ class NoteDetailViewModel @Inject constructor(
                 Logger.i("NoteDetailViewModel", "Comment added successfully")
             } catch (e: Exception) {
                 Logger.e("NoteDetailViewModel", "Failed to add comment", e)
+                _uiState.update { it.copy(error = e.message ?: "评论失败") }
             }
         }
     }

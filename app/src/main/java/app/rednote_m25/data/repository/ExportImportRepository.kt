@@ -19,12 +19,9 @@ class ExportImportRepository @Inject constructor(
     suspend fun exportAllData(): String {
         Logger.i("ExportImportRepository", "Starting data export")
         val notes = noteDao.getAllNotes().first()
-        val comments = mutableListOf<CommentEntity>()
-
-        for (note in notes) {
-            val noteComments = commentDao.getCommentsByNoteId(note.id).first()
-            comments.addAll(noteComments)
-        }
+        val allComments = commentDao.getAllComments().first()
+        val noteIds = notes.map { it.id }.toSet()
+        val comments = allComments.filter { it.noteId in noteIds }
 
         val jsonObject = JSONObject().apply {
             put("version", 1)

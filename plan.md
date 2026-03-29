@@ -127,6 +127,14 @@
 - [x] 添加收藏夹整理功能（创建收藏文件夹，整理收藏的笔记）
 - [x] 确保CI构建通过
 
+### 0.10.1 - 重构优化 (进行中)
+- [ ] 修复ProfileViewModel和TopicExploreViewModel中Flow collect未取消导致内存泄漏问题
+- [ ] 修复CollectionFolderRepository中N+1查询性能问题
+- [ ] 修复ExportImportRepository中N+1查询性能问题
+- [ ] 修复PublishViewModel中URL处理逻辑重复代码
+- [ ] 修复NoteDetailViewModel和EditNoteViewModel中错误处理不完善问题
+- [ ] 确保CI构建通过
+
 ### 长期规划 (0.11.x+)
 
 ## 技术架构

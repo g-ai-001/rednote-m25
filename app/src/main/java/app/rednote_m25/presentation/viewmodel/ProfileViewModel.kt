@@ -100,25 +100,31 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadUserAvatar() {
         viewModelScope.launch {
-            userPreferencesRepository.userAvatarUrl.collect { url ->
-                _uiState.update { it.copy(userAvatarUrl = url) }
-            }
+            userPreferencesRepository.userAvatarUrl
+                .take(1)
+                .collect { url ->
+                    _uiState.update { it.copy(userAvatarUrl = url) }
+                }
         }
     }
 
     private fun loadThemeMode() {
         viewModelScope.launch {
-            userPreferencesRepository.themeMode.collect { mode ->
-                _uiState.update { it.copy(themeMode = mode) }
-            }
+            userPreferencesRepository.themeMode
+                .take(1)
+                .collect { mode ->
+                    _uiState.update { it.copy(themeMode = mode) }
+                }
         }
     }
 
     private fun loadLocaleMode() {
         viewModelScope.launch {
-            userPreferencesRepository.localeMode.collect { mode ->
-                _uiState.update { it.copy(localeMode = mode) }
-            }
+            userPreferencesRepository.localeMode
+                .take(1)
+                .collect { mode ->
+                    _uiState.update { it.copy(localeMode = mode) }
+                }
         }
     }
 

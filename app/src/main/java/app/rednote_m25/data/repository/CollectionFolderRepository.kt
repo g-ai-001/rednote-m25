@@ -5,8 +5,6 @@ import app.rednote_m25.data.local.entity.CollectionFolderEntity
 import app.rednote_m25.data.local.entity.NoteCollectionFolderEntity
 import app.rednote_m25.domain.model.CollectionFolder
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -63,12 +61,19 @@ class CollectionFolderRepository @Inject constructor(
     }
 
     fun getFoldersWithNoteCounts(): Flow<List<CollectionFolder>> {
-        return collectionFolderDao.getAllFolders().map { folders ->
-            folders.map { folder ->
-                val count = collectionFolderDao.getNoteCountInFolder(folder.id).first()
-                folder.toDomain(count)
-            }
+        return collectionFolderDao.getAllFoldersWithNoteCounts().map { folders ->
+            folders.map { it.toDomain() }
         }
+    }
+
+    private fun CollectionFolderWithCount.toDomain(): CollectionFolder {
+        return CollectionFolder(
+            id = id,
+            name = name,
+            noteCount = noteCount,
+            createdAt = createdAt,
+            updatedAt = updatedAt
+        )
     }
 
     private fun CollectionFolderEntity.toDomain(noteCount: Int = 0): CollectionFolder {

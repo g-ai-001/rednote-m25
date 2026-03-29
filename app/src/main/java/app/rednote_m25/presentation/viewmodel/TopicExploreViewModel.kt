@@ -40,19 +40,18 @@ class TopicExploreViewModel @Inject constructor(
     private fun loadTopics() {
         viewModelScope.launch {
             try {
-                noteRepository.getAllNotes().collect { notes ->
-                    Logger.i("TopicExploreViewModel", "Loaded ${notes.size} notes")
-                    val tagCounts = mutableMapOf<String, Int>()
-                    notes.forEach { note ->
-                        note.tags.forEach { tag ->
-                            tagCounts[tag] = tagCounts.getOrDefault(tag, 0) + 1
-                        }
+                val notes = noteRepository.getAllNotes().first()
+                Logger.i("TopicExploreViewModel", "Loaded ${notes.size} notes")
+                val tagCounts = mutableMapOf<String, Int>()
+                notes.forEach { note ->
+                    note.tags.forEach { tag ->
+                        tagCounts[tag] = tagCounts.getOrDefault(tag, 0) + 1
                     }
-                    val topicItems = tagCounts.map { (tag, count) ->
-                        TopicItem(tag = tag, noteCount = count)
-                    }.sortedByDescending { it.noteCount }
-                    _uiState.update { it.copy(topics = topicItems, isLoading = false) }
                 }
+                val topicItems = tagCounts.map { (tag, count) ->
+                    TopicItem(tag = tag, noteCount = count)
+                }.sortedByDescending { it.noteCount }
+                _uiState.update { it.copy(topics = topicItems, isLoading = false) }
             } catch (e: Exception) {
                 Logger.e("TopicExploreViewModel", "Failed to load topics", e)
                 _uiState.update { it.copy(isLoading = false, error = e.message) }

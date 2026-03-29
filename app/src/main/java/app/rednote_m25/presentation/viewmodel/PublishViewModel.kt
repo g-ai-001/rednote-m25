@@ -88,6 +88,29 @@ class PublishViewModel @Inject constructor(
         }
     }
 
+    private fun parseImageUrls(imageUrls: String, fallback: Boolean): List<String> {
+        return if (imageUrls.isBlank()) {
+            if (fallback) {
+                listOf(
+                    "https://picsum.photos/seed/${System.currentTimeMillis()}/400/400",
+                    "https://picsum.photos/seed/${System.currentTimeMillis() + 1}/400/400"
+                )
+            } else {
+                emptyList()
+            }
+        } else {
+            imageUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        }
+    }
+
+    private fun parseVideoUrls(videoUrls: String): List<String> {
+        return if (videoUrls.isBlank()) {
+            emptyList()
+        } else {
+            videoUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        }
+    }
+
     fun saveDraft() {
         val state = _uiState.value
         Logger.i("PublishViewModel", "Saving draft")
@@ -98,16 +121,8 @@ class PublishViewModel @Inject constructor(
                 val coverUrl = state.coverImageUrl.ifBlank {
                     "https://picsum.photos/seed/${System.currentTimeMillis()}/400/300"
                 }
-                val imageList = if (state.imageUrls.isBlank()) {
-                    emptyList()
-                } else {
-                    state.imageUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-                }
-                val videoList = if (state.videoUrls.isBlank()) {
-                    emptyList()
-                } else {
-                    state.videoUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-                }
+                val imageList = parseImageUrls(state.imageUrls, fallback = false)
+                val videoList = parseVideoUrls(state.videoUrls)
 
                 val note = Note(
                     id = state.draftId ?: 0,
@@ -157,14 +172,7 @@ class PublishViewModel @Inject constructor(
                 val coverUrl = state.coverImageUrl.ifBlank {
                     "https://picsum.photos/seed/${System.currentTimeMillis()}/400/300"
                 }
-                val imageList = if (state.imageUrls.isBlank()) {
-                    listOf(
-                        "https://picsum.photos/seed/${System.currentTimeMillis()}/400/400",
-                        "https://picsum.photos/seed/${System.currentTimeMillis() + 1}/400/400"
-                    )
-                } else {
-                    state.imageUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-                }
+                val imageList = parseImageUrls(state.imageUrls, fallback = true)
 
                 val note = Note(
                     title = state.title,
