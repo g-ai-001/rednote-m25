@@ -40,6 +40,11 @@
 
 ## 版本历史
 
+### v0.9.2 (2026-03-29)
+- 清理未使用的VIDEO_ASPECT_RATIO常量
+- 清理未使用的shareBitmap变量
+- 版本号更新至0.9.2
+
 ### v0.9.1 (2026-03-29)
 - 修复SearchViewModel搜索输入缺少debouncing问题
 - 修复TopicExploreViewModel N+1查询性能问题
