@@ -71,6 +71,7 @@ class MainActivity : ComponentActivity() {
         }
         super.attachBaseContext(LocaleManager.applyLocale(newBase, localeMode))
     }
+}
 
 @Composable
 fun RednoteApp() {
