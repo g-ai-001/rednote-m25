@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import app.rednote_m25.data.repository.AppThemeMode
 
-private val RednoteRed = Color(0xFFFF2442)
+val RednoteRed = Color(0xFFFF2442)
 private val RednotePink = Color(0xFFFF6B6B)
 private val RednoteOrange = Color(0xFFFF9F43)
 private val RednoteYellow = Color(0xFFFECA57)

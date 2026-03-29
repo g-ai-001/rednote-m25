@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Typeface
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -370,7 +372,7 @@ private fun ActionButton(
 private fun createShareCardBitmapInternal(note: Note, isDarkTheme: Boolean): Bitmap {
     val width = 1080
     val height = 1920
-    val bitmap = Bitmap.createBitmap(width, height)
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
 
     val bgColor = if (isDarkTheme) android.graphics.Color.parseColor("#FF1A1A1A") else android.graphics.Color.parseColor("#FFFFFBFB")
