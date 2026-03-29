@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import app.rednote_m25.domain.model.Comment
 import app.rednote_m25.domain.model.Note
+import app.rednote_m25.presentation.ui.components.VideoPlayer
 import app.rednote_m25.presentation.ui.theme.RednoteRed
 import app.rednote_m25.presentation.viewmodel.NoteDetailViewModel
 import app.rednote_m25.util.FormatUtils
@@ -133,6 +134,14 @@ fun NoteDetailScreen(
                             Column(
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             ) {
+                                if (note.videoUrls.isNotEmpty()) {
+                                    VideoPlayer(
+                                        videoUrl = note.videoUrls.first(),
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                }
+
                                 note.coverImageUrl?.let { url ->
                                     AsyncImage(
                                         model = url,

@@ -53,4 +53,7 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes WHERE authorName = :authorName ORDER BY createdAt DESC")
     fun getNotesByAuthor(authorName: String): Flow<List<NoteEntity>>
+
+    @Query("SELECT * FROM notes WHERE isDraft = 1 ORDER BY updatedAt DESC")
+    fun getDraftNotes(): Flow<List<NoteEntity>>
 }

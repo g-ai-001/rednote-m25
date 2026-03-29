@@ -6,13 +6,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.rednote_m25.domain.model.Note
 import app.rednote_m25.presentation.viewmodel.PublishViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,10 +21,15 @@ import app.rednote_m25.presentation.viewmodel.PublishViewModel
 fun PublishScreen(
     onBackClick: () -> Unit,
     onPublishSuccess: () -> Unit,
+    editDraft: Note? = null,
     viewModel: PublishViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(editDraft) {
+        editDraft?.let { viewModel.loadDraft(it) }
+    }
 
     LaunchedEffect(uiState.publishSuccess) {
         if (uiState.publishSuccess) {
@@ -34,7 +40,7 @@ fun PublishScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("发布笔记") },
+                title = { Text(if (editDraft != null) "编辑草稿" else "发布笔记") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -44,6 +50,9 @@ fun PublishScreen(
                     }
                 },
                 actions = {
+                    TextButton(onClick = { viewModel.saveDraft() }) {
+                        Text("存草稿")
+                    }
                     IconButton(
                         onClick = { viewModel.publish() },
                         enabled = !uiState.isPublishing
@@ -121,6 +130,15 @@ fun PublishScreen(
                 onValueChange = { viewModel.updateImageUrls(it) },
                 label = { Text("图片URL列表（可选，多个用逗号分隔）") },
                 placeholder = { Text("留空则使用随机图片") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            OutlinedTextField(
+                value = uiState.videoUrls,
+                onValueChange = { viewModel.updateVideoUrls(it) },
+                label = { Text("视频URL列表（可选，多个用逗号分隔）") },
+                placeholder = { Text("支持本地视频路径或网络URL") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )

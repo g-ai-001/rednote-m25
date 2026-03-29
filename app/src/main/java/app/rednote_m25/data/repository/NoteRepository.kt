@@ -92,6 +92,12 @@ class NoteRepository @Inject constructor(
         }
     }
 
+    fun getDraftNotes(): Flow<List<Note>> {
+        return noteDao.getDraftNotes().map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
     private fun NoteEntity.toDomain(): Note {
         return Note(
             id = id,
@@ -99,6 +105,7 @@ class NoteRepository @Inject constructor(
             content = content,
             coverImageUrl = coverImageUrl,
             imageUrls = if (imageUrls.isBlank()) emptyList() else imageUrls.split(","),
+            videoUrls = if (videoUrls.isBlank()) emptyList() else videoUrls.split(","),
             authorName = authorName,
             authorAvatarUrl = authorAvatarUrl,
             likeCount = likeCount,
@@ -107,6 +114,7 @@ class NoteRepository @Inject constructor(
             shareCount = shareCount,
             isLiked = isLiked,
             isCollected = isCollected,
+            isDraft = isDraft,
             tags = if (tags.isBlank()) emptyList() else tags.split(","),
             createdAt = createdAt,
             updatedAt = updatedAt
@@ -120,6 +128,7 @@ class NoteRepository @Inject constructor(
             content = content,
             coverImageUrl = coverImageUrl,
             imageUrls = imageUrls.joinToString(","),
+            videoUrls = videoUrls.joinToString(","),
             authorName = authorName,
             authorAvatarUrl = authorAvatarUrl,
             likeCount = likeCount,
@@ -128,6 +137,7 @@ class NoteRepository @Inject constructor(
             shareCount = shareCount,
             isLiked = isLiked,
             isCollected = isCollected,
+            isDraft = isDraft,
             tags = tags.joinToString(","),
             createdAt = createdAt,
             updatedAt = updatedAt

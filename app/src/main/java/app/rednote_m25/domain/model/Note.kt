@@ -6,6 +6,7 @@ data class Note(
     val content: String,
     val coverImageUrl: String?,
     val imageUrls: List<String>,
+    val videoUrls: List<String> = emptyList(),
     val authorName: String,
     val authorAvatarUrl: String?,
     val likeCount: Int = 0,
@@ -14,6 +15,7 @@ data class Note(
     val shareCount: Int = 0,
     val isLiked: Boolean = false,
     val isCollected: Boolean = false,
+    val isDraft: Boolean = false,
     val tags: List<String> = emptyList(),
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()

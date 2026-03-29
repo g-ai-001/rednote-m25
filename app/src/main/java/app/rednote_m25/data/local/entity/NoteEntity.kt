@@ -11,6 +11,7 @@ data class NoteEntity(
     val content: String,
     val coverImageUrl: String?,
     val imageUrls: String,
+    val videoUrls: String = "",
     val authorName: String,
     val authorAvatarUrl: String?,
     val likeCount: Int = 0,
@@ -19,6 +20,7 @@ data class NoteEntity(
     val shareCount: Int = 0,
     val isLiked: Boolean = false,
     val isCollected: Boolean = false,
+    val isDraft: Boolean = false,
     val tags: String = "",
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()

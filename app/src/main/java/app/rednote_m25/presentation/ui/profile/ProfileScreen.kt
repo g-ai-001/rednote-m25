@@ -41,6 +41,7 @@ fun ProfileScreen(
     onBackClick: () -> Unit,
     onNoteClick: (Long) -> Unit,
     onPublishClick: () -> Unit,
+    onDraftsClick: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -173,6 +174,17 @@ fun ProfileScreen(
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Default.Language, contentDescription = null)
+                                }
+                            )
+                            HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text("草稿箱") },
+                                onClick = {
+                                    showSettingsMenu = false
+                                    onDraftsClick()
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.EditNote, contentDescription = null)
                                 }
                             )
                         }

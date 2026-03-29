@@ -15,10 +15,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.rednote_m25.data.repository.AppLocale
 import app.rednote_m25.data.repository.AppThemeMode
+import app.rednote_m25.data.repository.NoteRepository
 import app.rednote_m25.data.repository.UserPreferencesRepository
+import app.rednote_m25.domain.model.Note
 import app.rednote_m25.presentation.ui.category.CategoryScreen
 import app.rednote_m25.presentation.ui.collection.CollectionScreen
 import app.rednote_m25.presentation.ui.detail.NoteDetailScreen
+import app.rednote_m25.presentation.ui.draft.DraftScreen
 import app.rednote_m25.presentation.ui.edit.EditNoteScreen
 import app.rednote_m25.presentation.ui.explore.TopicExploreScreen
 import app.rednote_m25.presentation.ui.home.HomeScreen
@@ -35,6 +38,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
+
+    @Inject
+    lateinit var noteRepository: NoteRepository
 
     private var previousLocaleMode: AppLocale = AppLocale.SYSTEM
 
@@ -148,6 +154,9 @@ fun RednoteApp() {
                 },
                 onPublishClick = {
                     navController.navigate("publish")
+                },
+                onDraftsClick = {
+                    navController.navigate("drafts")
                 }
             )
         }
@@ -158,6 +167,37 @@ fun RednoteApp() {
                 onPublishSuccess = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable("drafts") {
+            DraftScreen(
+                onBackClick = { navController.popBackStack() },
+                onEditDraft = { draftId ->
+                    navController.navigate("edit_draft/$draftId")
+                }
+            )
+        }
+
+        composable(
+            route = "edit_draft/{draftId}",
+            arguments = listOf(
+                navArgument("draftId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val draftId = backStackEntry.arguments?.getLong("draftId") ?: 0L
+            var draftNote by remember { mutableStateOf<Note?>(null) }
+
+            LaunchedEffect(draftId) {
+                draftNote = noteRepository.getNoteByIdOnce(draftId)
+            }
+
+            PublishScreen(
+                onBackClick = { navController.popBackStack() },
+                onPublishSuccess = {
+                    navController.popBackStack("drafts", inclusive = false)
+                },
+                editDraft = draftNote
             )
         }
 

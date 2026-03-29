@@ -17,11 +17,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class PublishUiState(
+    val draftId: Long? = null,
     val title: String = "",
     val content: String = "",
     val tags: String = "",
     val coverImageUrl: String = "",
     val imageUrls: String = "",
+    val videoUrls: String = "",
     val isPublishing: Boolean = false,
     val publishSuccess: Boolean = false,
     val error: String? = null
@@ -54,6 +56,73 @@ class PublishViewModel @Inject constructor(
 
     fun updateImageUrls(urls: String) {
         _uiState.update { it.copy(imageUrls = urls) }
+    }
+
+    fun updateVideoUrls(urls: String) {
+        _uiState.update { it.copy(videoUrls = urls) }
+    }
+
+    fun loadDraft(draft: Note) {
+        _uiState.update {
+            it.copy(
+                draftId = draft.id,
+                title = draft.title,
+                content = draft.content,
+                tags = draft.tags.joinToString(","),
+                coverImageUrl = draft.coverImageUrl ?: "",
+                imageUrls = draft.imageUrls.joinToString(","),
+                videoUrls = draft.videoUrls.joinToString(",")
+            )
+        }
+    }
+
+    fun saveDraft() {
+        val state = _uiState.value
+        Logger.i("PublishViewModel", "Saving draft")
+
+        viewModelScope.launch {
+            try {
+                val userAvatar = userPreferencesRepository.userAvatarUrl.first()
+                val coverUrl = state.coverImageUrl.ifBlank {
+                    "https://picsum.photos/seed/${System.currentTimeMillis()}/400/300"
+                }
+                val imageList = if (state.imageUrls.isBlank()) {
+                    emptyList()
+                } else {
+                    state.imageUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                }
+                val videoList = if (state.videoUrls.isBlank()) {
+                    emptyList()
+                } else {
+                    state.videoUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                }
+
+                val note = Note(
+                    id = state.draftId ?: 0,
+                    title = state.title,
+                    content = state.content,
+                    coverImageUrl = coverUrl,
+                    imageUrls = imageList,
+                    videoUrls = videoList,
+                    authorName = FormatUtils.CURRENT_USER_NAME,
+                    authorAvatarUrl = userAvatar.ifEmpty { null },
+                    tags = state.tags.split(",").map { it.trim() }.filter { it.isNotEmpty() },
+                    isDraft = true,
+                    updatedAt = System.currentTimeMillis()
+                )
+
+                if (state.draftId != null) {
+                    noteRepository.updateNote(note)
+                } else {
+                    noteRepository.insertNote(note)
+                }
+                Logger.i("PublishViewModel", "Draft saved successfully")
+                _uiState.update { it.copy(publishSuccess = true) }
+            } catch (e: Exception) {
+                Logger.e("PublishViewModel", "Failed to save draft", e)
+                _uiState.update { it.copy(error = e.message ?: "保存失败") }
+            }
+        }
     }
 
     fun publish() {

@@ -13,8 +13,8 @@ android {
         applicationId = "app.rednote_m25"
         minSdk = 36
         targetSdk = 36
-        versionCode = 12
-        versionName = "0.8.1"
+        versionCode = 13
+        versionName = "0.9.0"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -90,6 +90,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.coil.compose)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
     implementation(libs.datastore.preferences)
     implementation(libs.material3.window.size)
 
