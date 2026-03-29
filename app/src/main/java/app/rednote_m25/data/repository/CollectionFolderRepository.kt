@@ -1,6 +1,7 @@
 package app.rednote_m25.data.repository
 
 import app.rednote_m25.data.local.dao.CollectionFolderDao
+import app.rednote_m25.data.local.dao.CollectionFolderWithCount
 import app.rednote_m25.data.local.entity.CollectionFolderEntity
 import app.rednote_m25.data.local.entity.NoteCollectionFolderEntity
 import app.rednote_m25.domain.model.CollectionFolder

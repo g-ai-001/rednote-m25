@@ -19,7 +19,7 @@ class ExportImportRepository @Inject constructor(
     suspend fun exportAllData(): String {
         Logger.i("ExportImportRepository", "Starting data export")
         val notes = noteDao.getAllNotes().first()
-        val allComments = commentDao.getAllComments().first()
+        val allComments = commentDao.getAllComments()
         val noteIds = notes.map { it.id }.toSet()
         val comments = allComments.filter { it.noteId in noteIds }
 
