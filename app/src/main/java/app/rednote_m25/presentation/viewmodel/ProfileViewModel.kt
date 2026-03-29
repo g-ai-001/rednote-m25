@@ -9,6 +9,7 @@ import app.rednote_m25.data.repository.ExportImportRepository
 import app.rednote_m25.data.repository.NoteRepository
 import app.rednote_m25.data.repository.UserPreferencesRepository
 import app.rednote_m25.domain.model.Note
+import app.rednote_m25.util.FormatUtils
 import app.rednote_m25.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -50,7 +51,7 @@ class ProfileViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    private val currentUserName = "当前用户"
+    private val currentUserName = FormatUtils.CURRENT_USER_NAME
 
     init {
         Logger.i("ProfileViewModel", "Loading profile data")

@@ -47,7 +47,7 @@ class TopicExploreViewModel @Inject constructor(
                         val count = noteRepository.getNotesCountByTag(tag).first()
                         topicItems.add(TopicItem(tag = tag, noteCount = count))
                     }
-                    topicItems.sortedByDescending { it.noteCount }
+                    topicItems.sortByDescending { it.noteCount }
                     _uiState.update { it.copy(topics = topicItems, isLoading = false) }
                 }
             } catch (e: Exception) {

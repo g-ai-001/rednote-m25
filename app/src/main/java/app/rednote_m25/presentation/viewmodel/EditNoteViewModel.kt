@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.rednote_m25.data.repository.NoteRepository
 import app.rednote_m25.domain.model.Note
+import app.rednote_m25.util.FormatUtils
 import app.rednote_m25.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -114,7 +115,7 @@ class EditNoteViewModel @Inject constructor(
                     content = state.content,
                     coverImageUrl = state.coverImageUrl.ifBlank { null },
                     imageUrls = if (state.imageUrls.isBlank()) emptyList() else state.imageUrls.split(",").map { it.trim() }.filter { it.isNotEmpty() },
-                    authorName = "当前用户",
+                    authorName = FormatUtils.CURRENT_USER_NAME,
                     authorAvatarUrl = null,
                     tags = state.tags.split(",").map { it.trim() }.filter { it.isNotEmpty() },
                     updatedAt = System.currentTimeMillis()

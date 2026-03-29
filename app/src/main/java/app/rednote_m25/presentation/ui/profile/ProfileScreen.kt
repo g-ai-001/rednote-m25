@@ -28,6 +28,7 @@ import app.rednote_m25.domain.model.Note
 import app.rednote_m25.presentation.ui.components.StaggeredNotesGrid
 import app.rednote_m25.presentation.viewmodel.ProfileTab
 import app.rednote_m25.presentation.viewmodel.ProfileViewModel
+import app.rednote_m25.util.FormatUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -262,7 +263,7 @@ private fun ProfileHeader(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "当前用户",
+            text = FormatUtils.CURRENT_USER_NAME,
             style = MaterialTheme.typography.titleMedium
         )
 

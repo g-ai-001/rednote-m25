@@ -7,6 +7,7 @@ import app.rednote_m25.data.repository.CommentRepository
 import app.rednote_m25.data.repository.NoteRepository
 import app.rednote_m25.domain.model.Comment
 import app.rednote_m25.domain.model.Note
+import app.rednote_m25.util.FormatUtils
 import app.rednote_m25.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -97,7 +98,7 @@ class NoteDetailViewModel @Inject constructor(
             try {
                 val comment = Comment(
                     noteId = note.id,
-                    authorName = "当前用户",
+                    authorName = FormatUtils.CURRENT_USER_NAME,
                     authorAvatarUrl = null,
                     content = text
                 )
