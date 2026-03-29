@@ -36,10 +36,10 @@ fun VideoPlayer(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var isPlaying by rememberSaveable { mutableStateOf(false) }
-    var isMuted by rememberSaveable { mutableStateOf(false) }
+    var isPlaying by remember { mutableStateOf(false) }
+    var isMuted by remember { mutableStateOf(false) }
 
-    val exoPlayer = rememberSaveable(videoUrl) {
+    val exoPlayer = remember(videoUrl) {
         ExoPlayer.Builder(context).build().apply {
             val mediaItem = MediaItem.fromUri(videoUrl)
             setMediaItem(mediaItem)
