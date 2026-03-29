@@ -13,8 +13,8 @@ android {
         applicationId = "app.rednote_m25"
         minSdk = 36
         targetSdk = 36
-        versionCode = 13
-        versionName = "0.9.0"
+        versionCode = 14
+        versionName = "0.9.1"
 
         vectorDrawables {
             useSupportLibrary = true

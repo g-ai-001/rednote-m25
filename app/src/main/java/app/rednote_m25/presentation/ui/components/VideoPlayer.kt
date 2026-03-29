@@ -27,6 +27,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
+private const val VIDEO_ASPECT_RATIO = 16f / 9f
+
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
@@ -34,10 +36,10 @@ fun VideoPlayer(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var isPlaying by remember { mutableStateOf(false) }
-    var isMuted by remember { mutableStateOf(false) }
+    var isPlaying by rememberSaveable { mutableStateOf(false) }
+    var isMuted by rememberSaveable { mutableStateOf(false) }
 
-    val exoPlayer = remember {
+    val exoPlayer = rememberSaveable(videoUrl) {
         ExoPlayer.Builder(context).build().apply {
             val mediaItem = MediaItem.fromUri(videoUrl)
             setMediaItem(mediaItem)

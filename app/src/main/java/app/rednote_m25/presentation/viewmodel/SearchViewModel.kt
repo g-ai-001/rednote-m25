@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val SEARCH_DEBOUNCE_MS = 300L
+
 data class SearchUiState(
     val searchQuery: String = "",
     val searchResults: List<Note> = emptyList(),
@@ -25,29 +27,40 @@ class SearchViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            _searchQuery
+                .debounce(SEARCH_DEBOUNCE_MS)
+                .filter { it.isNotBlank() }
+                .distinctUntilChanged()
+                .collect { query ->
+                    performSearch(query)
+                }
+        }
+    }
+
     fun onSearchQueryChange(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
-        if (query.isNotBlank()) {
-            search(query)
-        } else {
+        _searchQuery.value = query
+        if (query.isBlank()) {
             _uiState.update { it.copy(searchResults = emptyList(), isSearching = false) }
         }
     }
 
-    private fun search(query: String) {
+    private suspend fun performSearch(query: String) {
         Logger.i("SearchViewModel", "Searching for: $query")
-        viewModelScope.launch {
-            _uiState.update { it.copy(isSearching = true) }
-            noteRepository.searchNotes(query)
-                .catch { e ->
-                    Logger.e("SearchViewModel", "Search failed", e)
-                    _uiState.update { it.copy(isSearching = false, error = e.message) }
-                }
-                .collect { notes ->
-                    Logger.i("SearchViewModel", "Found ${notes.size} notes")
-                    _uiState.update { it.copy(searchResults = notes, isSearching = false, error = null) }
-                }
-        }
+        _uiState.update { it.copy(isSearching = true) }
+        noteRepository.searchNotes(query)
+            .catch { e ->
+                Logger.e("SearchViewModel", "Search failed", e)
+                _uiState.update { it.copy(isSearching = false, error = e.message) }
+            }
+            .collect { notes ->
+                Logger.i("SearchViewModel", "Found ${notes.size} notes")
+                _uiState.update { it.copy(searchResults = notes, isSearching = false, error = null) }
+            }
     }
 
     fun toggleLike(noteId: Long, isLiked: Boolean) {

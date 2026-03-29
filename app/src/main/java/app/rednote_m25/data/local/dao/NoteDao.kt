@@ -56,4 +56,7 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes WHERE isDraft = 1 ORDER BY updatedAt DESC")
     fun getDraftNotes(): Flow<List<NoteEntity>>
+
+    @Query("SELECT COUNT(*) FROM notes WHERE tags LIKE '%' || :tag || '%'")
+    suspend fun getNotesCountByTag(tag: String): Int
 }

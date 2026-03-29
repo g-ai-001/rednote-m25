@@ -109,6 +109,13 @@
 - [x] 优化图片加载和缓存性能
 - [x] 确保CI构建通过
 
+### 0.9.1 - 重构优化 (进行中)
+- [ ] 修复SearchViewModel搜索输入缺少debouncing问题
+- [ ] 修复TopicExploreViewModel N+1查询性能问题
+- [ ] 修复VideoPlayer配置变化时可能丢失状态问题
+- [ ] 清理未使用的imports和硬编码字符串
+- [ ] 确保CI构建通过
+
 ### 长期规划 (0.10.x+)
 
 ## 技术架构
