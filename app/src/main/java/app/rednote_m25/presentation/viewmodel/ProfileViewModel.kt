@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.rednote_m25.data.repository.AppThemeMode
 import app.rednote_m25.data.repository.ExportImportRepository
 import app.rednote_m25.data.repository.NoteRepository
 import app.rednote_m25.data.repository.UserPreferencesRepository
@@ -28,6 +29,7 @@ data class ProfileUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val userAvatarUrl: String = "",
+    val themeMode: AppThemeMode = AppThemeMode.SYSTEM,
     val showDeleteDialog: Boolean = false,
     val noteToDelete: Note? = null,
     val exportSuccess: String? = null,
@@ -58,6 +60,7 @@ class ProfileViewModel @Inject constructor(
         loadMyNotes()
         loadMyCollections()
         loadUserAvatar()
+        loadThemeMode()
     }
 
     private fun loadMyNotes() {
@@ -92,6 +95,14 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferencesRepository.userAvatarUrl.collect { url ->
                 _uiState.update { it.copy(userAvatarUrl = url) }
+            }
+        }
+    }
+
+    private fun loadThemeMode() {
+        viewModelScope.launch {
+            userPreferencesRepository.themeMode.collect { mode ->
+                _uiState.update { it.copy(themeMode = mode) }
             }
         }
     }
@@ -136,6 +147,13 @@ class ProfileViewModel @Inject constructor(
         Logger.i("ProfileViewModel", "Updating user avatar")
         viewModelScope.launch {
             userPreferencesRepository.updateUserAvatar(avatarUrl)
+        }
+    }
+
+    fun updateThemeMode(mode: AppThemeMode) {
+        Logger.i("ProfileViewModel", "Updating theme mode: $mode")
+        viewModelScope.launch {
+            userPreferencesRepository.updateThemeMode(mode)
         }
     }
 

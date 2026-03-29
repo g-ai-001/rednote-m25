@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import app.rednote_m25.data.repository.AppThemeMode
 import app.rednote_m25.domain.model.Note
 import app.rednote_m25.presentation.ui.components.StaggeredNotesGrid
 import app.rednote_m25.presentation.viewmodel.ProfileTab
@@ -43,6 +44,7 @@ fun ProfileScreen(
 
     var showAvatarDialog by remember { mutableStateOf(false) }
     var showExportImportMenu by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
 
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -86,6 +88,12 @@ fun ProfileScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showThemeDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "设置"
+                        )
+                    }
                     IconButton(onClick = { showExportImportMenu = true }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
@@ -219,6 +227,17 @@ fun ProfileScreen(
             onAvatarSelected = { url ->
                 viewModel.updateUserAvatar(url)
                 showAvatarDialog = false
+            }
+        )
+    }
+
+    if (showThemeDialog) {
+        ThemeSelectionDialog(
+            currentTheme = uiState.themeMode,
+            onDismiss = { showThemeDialog = false },
+            onThemeSelected = { theme ->
+                viewModel.updateThemeMode(theme)
+                showThemeDialog = false
             }
         )
     }
@@ -474,5 +493,90 @@ private fun EmptyState(message: String) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+@Composable
+private fun ThemeSelectionDialog(
+    currentTheme: AppThemeMode,
+    onDismiss: () -> Unit,
+    onThemeSelected: (AppThemeMode) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("主题设置") },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ThemeOption(
+                    title = "跟随系统",
+                    icon = Icons.Default.Smartphone,
+                    isSelected = currentTheme == AppThemeMode.SYSTEM,
+                    onClick = { onThemeSelected(AppThemeMode.SYSTEM) }
+                )
+                ThemeOption(
+                    title = "浅色模式",
+                    icon = Icons.Default.LightMode,
+                    isSelected = currentTheme == AppThemeMode.LIGHT,
+                    onClick = { onThemeSelected(AppThemeMode.LIGHT) }
+                )
+                ThemeOption(
+                    title = "深色模式",
+                    icon = Icons.Default.DarkMode,
+                    isSelected = currentTheme == AppThemeMode.DARK,
+                    onClick = { onThemeSelected(AppThemeMode.DARK) }
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("取消")
+            }
+        }
+    )
+}
+
+@Composable
+private fun ThemeOption(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                else MaterialTheme.colorScheme.surface
+            )
+            .clickable { onClick() }
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (isSelected) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+            else MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "已选择",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }
