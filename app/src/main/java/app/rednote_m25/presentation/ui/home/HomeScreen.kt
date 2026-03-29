@@ -3,14 +3,8 @@ package app.rednote_m25.presentation.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Category
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -19,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.rednote_m25.presentation.ui.components.StaggeredNotesGrid
 import app.rednote_m25.presentation.viewmodel.HomeViewModel
+import app.rednote_m25.presentation.viewmodel.SortType
 
 enum class HomeTab(
     val title: String,
@@ -42,6 +37,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selectedTab by remember { mutableStateOf(HomeTab.HOME) }
+    var sortMenuExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -53,6 +49,53 @@ fun HomeScreen(
                     )
                 },
                 actions = {
+                    Box {
+                        IconButton(onClick = { sortMenuExpanded = true }) {
+                            Icon(
+                                imageVector = if (uiState.sortType == SortType.POPULAR) Icons.Default.TrendingUp else Icons.Default.Schedule,
+                                contentDescription = "排序"
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = sortMenuExpanded,
+                            onDismissRequest = { sortMenuExpanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("最新") },
+                                onClick = {
+                                    viewModel.setSortType(SortType.LATEST)
+                                    sortMenuExpanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Schedule,
+                                        contentDescription = null,
+                                        tint = if (uiState.sortType == SortType.LATEST)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("最热") },
+                                onClick = {
+                                    viewModel.setSortType(SortType.POPULAR)
+                                    sortMenuExpanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.TrendingUp,
+                                        contentDescription = null,
+                                        tint = if (uiState.sortType == SortType.POPULAR)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            )
+                        }
+                    }
                     IconButton(onClick = onSearchClick) {
                         Icon(
                             imageVector = Icons.Default.Search,

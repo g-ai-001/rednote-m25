@@ -13,8 +13,14 @@ import javax.inject.Inject
 data class HomeUiState(
     val notes: List<Note> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val sortType: SortType = SortType.LATEST
 )
+
+enum class SortType {
+    LATEST,
+    POPULAR
+}
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -38,9 +44,32 @@ class HomeViewModel @Inject constructor(
                 }
                 .collect { notes ->
                     Logger.i("HomeViewModel", "Loaded ${notes.size} notes")
-                    _uiState.update { it.copy(notes = notes, isLoading = false, error = null) }
+                    applySorting(notes)
                 }
         }
+    }
+
+    private fun applySorting(notes: List<Note>) {
+        val sortedNotes = when (_uiState.value.sortType) {
+            SortType.LATEST -> notes.sortedByDescending { it.createdAt }
+            SortType.POPULAR -> notes.sortedByDescending { it.likeCount + it.collectCount }
+        }
+        _uiState.update { it.copy(notes = sortedNotes, isLoading = false, error = null) }
+    }
+
+    fun setSortType(sortType: SortType) {
+        Logger.i("HomeViewModel", "setSortType: $sortType")
+        val currentNotes = _uiState.value.notes
+        val sortedNotes = when (sortType) {
+            SortType.LATEST -> currentNotes.sortedByDescending { it.createdAt }
+            SortType.POPULAR -> currentNotes.sortedByDescending { it.likeCount + it.collectCount }
+        }
+        _uiState.update { it.copy(notes = sortedNotes, sortType = sortType) }
+    }
+
+    fun refresh() {
+        _uiState.update { it.copy(isLoading = true) }
+        loadNotes()
     }
 
     fun toggleLike(noteId: Long, isLiked: Boolean) {
@@ -55,10 +84,5 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             noteRepository.toggleCollect(noteId, isCollected)
         }
-    }
-
-    fun refresh() {
-        _uiState.update { it.copy(isLoading = true) }
-        loadNotes()
     }
 }

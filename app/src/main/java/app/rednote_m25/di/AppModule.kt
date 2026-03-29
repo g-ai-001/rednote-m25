@@ -3,6 +3,7 @@ package app.rednote_m25.di
 import android.content.Context
 import androidx.room.Room
 import app.rednote_m25.data.local.AppDatabase
+import app.rednote_m25.data.local.dao.CollectionFolderDao
 import app.rednote_m25.data.local.dao.CommentDao
 import app.rednote_m25.data.local.dao.NoteDao
 import dagger.Module
@@ -36,5 +37,11 @@ object AppModule {
     @Singleton
     fun provideCommentDao(database: AppDatabase): CommentDao {
         return database.commentDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCollectionFolderDao(database: AppDatabase): CollectionFolderDao {
+        return database.collectionFolderDao()
     }
 }
