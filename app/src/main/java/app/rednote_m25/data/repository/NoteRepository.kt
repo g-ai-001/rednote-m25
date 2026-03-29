@@ -40,14 +40,12 @@ class NoteRepository @Inject constructor(
 
     suspend fun toggleLike(id: Long, isLiked: Boolean) {
         val note = noteDao.getNoteById(id) ?: return
-        val delta = if (isLiked) 1 else -1
         val newLikeCount = if (isLiked) note.likeCount + 1 else maxOf(0, note.likeCount - 1)
         noteDao.updateLikeStatus(id, isLiked, newLikeCount)
     }
 
     suspend fun toggleCollect(id: Long, isCollected: Boolean) {
         val note = noteDao.getNoteById(id) ?: return
-        val delta = if (isCollected) 1 else -1
         val newCollectCount = if (isCollected) note.collectCount + 1 else maxOf(0, note.collectCount - 1)
         noteDao.updateCollectStatus(id, isCollected, newCollectCount)
     }

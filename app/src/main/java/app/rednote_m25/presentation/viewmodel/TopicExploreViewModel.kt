@@ -42,12 +42,10 @@ class TopicExploreViewModel @Inject constructor(
             try {
                 noteRepository.getAllTags().collect { tags ->
                     Logger.i("TopicExploreViewModel", "Loaded ${tags.size} tags")
-                    val topicItems = mutableListOf<TopicItem>()
-                    for (tag in tags) {
+                    val topicItems = tags.map { tag ->
                         val count = noteRepository.getNotesCountByTag(tag).first()
-                        topicItems.add(TopicItem(tag = tag, noteCount = count))
-                    }
-                    topicItems.sortByDescending { it.noteCount }
+                        TopicItem(tag = tag, noteCount = count)
+                    }.sortedByDescending { it.noteCount }
                     _uiState.update { it.copy(topics = topicItems, isLoading = false) }
                 }
             } catch (e: Exception) {

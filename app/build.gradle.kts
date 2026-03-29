@@ -13,8 +13,8 @@ android {
         applicationId = "app.rednote_m25"
         minSdk = 36
         targetSdk = 36
-        versionCode = 11
-        versionName = "0.8.0"
+        versionCode = 12
+        versionName = "0.8.1"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -78,10 +78,6 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.session)
-    implementation(libs.androidx.media3.ui)
-
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
@@ -96,8 +92,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.datastore.preferences)
     implementation(libs.material3.window.size)
-    implementation(libs.glance.appwidget)
-    implementation(libs.glance.material3)
 
     debugImplementation(libs.androidx.ui.tooling)
 }
