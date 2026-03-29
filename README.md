@@ -41,37 +41,23 @@
 
 ## 版本历史
 
+### v0.10.1 (2026-03-29)
+- 重构优化：修复ProfileViewModel和TopicExploreViewModel中Flow内存泄漏问题
+- 重构优化：修复CollectionFolderRepository和ExportImportRepository中N+1查询性能问题
+- 重构优化：修复PublishViewModel中代码重复和NoteDetailViewModel错误处理问题
+- 版本号更新至0.10.1
+
 ### v0.10.0 (2026-03-29)
 - 添加首页排序功能，支持按最新/最热排序笔记
 - 添加收藏夹文件夹功能，支持创建和管理收藏文件夹
 - 版本号更新至0.10.0
 
-### v0.9.2 (2026-03-29)
-- 清理未使用的VIDEO_ASPECT_RATIO常量
-- 清理未使用的shareBitmap变量
-- 版本号更新至0.9.2
-
-### v0.9.1 (2026-03-29)
-- 修复SearchViewModel搜索输入缺少debouncing问题
-- 修复TopicExploreViewModel N+1查询性能问题
-- 修复VideoPlayer编译错误
-- 清理VideoPlayer重复import
-
-### v0.9.0 (2026-03-29)
-- 添加视频播放功能，支持在笔记中播放视频
-- 添加草稿箱功能，支持保存和管理未发布的笔记草稿
-- 添加存草稿按钮，发布前可先保存草稿
-
-### v0.8.1 (2026-03-29)
-- 重构优化代码，移除未使用的Media3和Glance依赖
-- 优化TopicExploreViewModel查询逻辑
-- 移除NoteRepository中未使用的代码
-
-### v0.8.0 (2026-03-29)
-- 添加国际化支持，支持简体中文和English切换
-- 在个人主页设置中可选择语言：跟随系统、简体中文、English
-
-### v0.7.0 - v0.6.0 (2026-03-29)
+### v0.9.x - v0.6.0 (2026-03-29)
+- v0.9.2: 清理未使用的常量
+- v0.9.1: 修复搜索防抖、话题N+1查询和VideoPlayer编译问题
+- v0.9.0: 添加视频播放和草稿箱功能
+- v0.8.1: 重构优化代码
+- v0.8.0: 添加国际化支持
 - v0.7.0: 添加数据备份与恢复功能
 - v0.6.2: 修复笔记分享功能编译错误
 - v0.6.1: 添加笔记分享功能

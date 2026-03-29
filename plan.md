@@ -127,13 +127,13 @@
 - [x] 添加收藏夹整理功能（创建收藏文件夹，整理收藏的笔记）
 - [x] 确保CI构建通过
 
-### 0.10.1 - 重构优化 (进行中)
-- [ ] 修复ProfileViewModel和TopicExploreViewModel中Flow collect未取消导致内存泄漏问题
-- [ ] 修复CollectionFolderRepository中N+1查询性能问题
-- [ ] 修复ExportImportRepository中N+1查询性能问题
-- [ ] 修复PublishViewModel中URL处理逻辑重复代码
-- [ ] 修复NoteDetailViewModel和EditNoteViewModel中错误处理不完善问题
-- [ ] 确保CI构建通过
+### 0.10.1 - 重构优化 (已完成)
+- [x] 修复ProfileViewModel和TopicExploreViewModel中Flow collect未取消导致内存泄漏问题
+- [x] 修复CollectionFolderRepository中N+1查询性能问题
+- [x] 修复ExportImportRepository中N+1查询性能问题
+- [x] 修复PublishViewModel中URL处理逻辑重复代码
+- [x] 修复NoteDetailViewModel中错误处理不完善问题
+- [x] 确保CI构建通过
 
 ### 长期规划 (0.11.x+)
 
@@ -147,9 +147,6 @@
 ## 版本历史
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 0.10.1 | 2026-03-29 | 重构优化：修复Flow内存泄漏和N+1查询性能问题，修复代码重复和错误处理问题 |
 | 0.10.0 | 2026-03-29 | 添加笔记排序和收藏夹整理功能，支持按最新/最热排序笔记，创建和管理收藏文件夹 |
-| 0.9.2 | 2026-03-29 | 重构优化：审查并优化代码架构，修复潜在问题 |
-| 0.9.1 | 2026-03-29 | 重构优化：修复搜索防抖、话题N+1查询和VideoPlayer编译问题 |
-| 0.9.0 | 2026-03-29 | 添加视频播放和草稿箱功能，支持笔记视频播放和草稿管理 |
-| 0.8.1 | 2026-03-29 | 重构优化：移除未使用依赖，修复代码问题 |
-| 0.8.0 | 2026-03-29 | 添加国际化支持，支持简体中文和English切换 |
+| 0.9.x | 2026-03-29 | 早期版本：视频播放、草稿箱、国际化、数据备份恢复等 |
